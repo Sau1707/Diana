@@ -83,6 +83,7 @@ def report_h3p(
     root = Path(str(h3p_config["_project_root"]))
     results_dir = root / str(h3p_config["paths"]["results_dir"])
     checkpoint_dir = root / str(h3p_config["paths"]["checkpoint_dir"])
+    audit_dir = root / str(h3p_config["paths"]["audit_dir"])
     development_dir = (
         root / str(h3p_config["paths"]["private_run_root"])
     ).parent / "development"
@@ -212,6 +213,30 @@ def report_h3p(
             f"{group.loc['catboost', 'overall_normalized_score']:.6f} | "
             f"{group.loc['diana_h3p', 'overall_normalized_score']:.6f} |"
         )
+    uncertainty_table = [
+        "| K | LH coverage / width | E3G coverage / width | PdG coverage / width |",
+        "|---:|---:|---:|---:|",
+    ]
+    few_uncertainty = uncertainty.loc[
+        uncertainty["model_name"].eq("diana_h3p")
+        & uncertainty["track"].eq(TRACK_FEW_SHOT)
+    ]
+    for budget in (0, 3, 7):
+        group = few_uncertainty.loc[
+            few_uncertainty["calibration_budget"].eq(budget)
+        ].set_index("hormone")
+        uncertainty_table.append(
+            f"| {budget} | {group.loc['lh', 'participant_macro_coverage_80']:.3f} / "
+            f"{group.loc['lh', 'participant_macro_mean_width']:.3f} | "
+            f"{group.loc['e3g', 'participant_macro_coverage_80']:.3f} / "
+            f"{group.loc['e3g', 'participant_macro_mean_width']:.3f} | "
+            f"{group.loc['pdg', 'participant_macro_coverage_80']:.3f} / "
+            f"{group.loc['pdg', 'participant_macro_mean_width']:.3f} |"
+        )
+    custom_cold = cold.loc[cold["model_name"].eq("diana_h3p")].iloc[0]
+    custom_few = few.loc[few["model_name"].eq("diana_h3p")].set_index(
+        "calibration_budget"
+    )
     winner = cold.iloc[0]
     markdown = [
         "# Diana-H3P on Hormonbench-mcPHASES v1",
@@ -221,6 +246,7 @@ def report_h3p(
         "Hormonbench remains Diana's primary reusable contribution. Diana-H3P is one compact reference implementation with a participant-independent stacked wearable prior and K=0/3/7 empirical-Bayes personalization.",
         "",
         f"Cold-start leader: `{winner.model_name}` at {winner.overall_normalized_score:.6f} (lower is better).",
+        f"Diana-H3P scored {custom_cold.overall_normalized_score:.6f}; it did not beat the strongest comparator in cold start or at K=3/K=7. At K=7 it was 0.28% worse overall than CatBoost while improving LH and E3G and worsening PdG. No superiority claim is warranted.",
         "",
         *cold_table,
         "",
@@ -228,9 +254,21 @@ def report_h3p(
         "",
         *few_table,
         "",
+        "Diana-H3P fold-score standard deviations were "
+        f"{custom_cold.fold_score_sd:.5f} (cold start), "
+        f"{custom_few.loc[0, 'fold_score_sd']:.5f} (K=0), "
+        f"{custom_few.loc[3, 'fold_score_sd']:.5f} (K=3), and "
+        f"{custom_few.loc[7, 'fold_score_sd']:.5f} (K=7).",
+        "",
         "K counts the earliest authorized complete urinary LH/E3G/PdG measurements. All budgets use the same post-seventh-measurement scoring suffix; calibration rows are never scored.",
         "",
-        "Intervals are 80% participant-block calibrated research prediction intervals. Correlated overlapping windows and the small cohort preclude an IID finite-sample or clinical-confidence interpretation.",
+        "## Research uncertainty",
+        "",
+        "Coverage / mean width in log1p units:",
+        "",
+        *uncertainty_table,
+        "",
+        "Intervals are 80% participant-block calibrated research prediction intervals. Empirical coverage ranged from 0.781 to 0.796. Correlated overlapping windows, the small cohort, and a fixed Layer-1 stack during interval pseudo-LOPO calibration preclude an IID finite-sample or clinical-confidence interpretation.",
         "",
         "The prior `joint_bayes_personalizer` is retained only as `historical_protocol_compromised_comparator`: a fold-0 validation group selected a global covariance mode before later appearing as outer test. It is not part of this active leaderboard.",
         "",
@@ -242,6 +280,9 @@ def report_h3p(
         (project_path(benchmark_config, "prepared_dir") / "metadata.json").read_text(
             encoding="utf-8"
         )
+    )
+    baseline_reuse_audit = json.loads(
+        (audit_dir / "baseline_reuse_audit.json").read_text(encoding="utf-8")
     )
     output_paths = [
         results_dir / "metrics.json",
@@ -265,6 +306,12 @@ def report_h3p(
         "h3p_config_hash": manifest["h3p_config_hash"],
         "h3p_model_spec_hash": manifest["h3p_model_spec_hash"],
         "implementation_spec_sha256": manifest["implementation_spec_sha256"],
+        "implementation_spec_sha256_at_training": manifest[
+            "implementation_spec_sha256"
+        ],
+        "implementation_spec_sha256_current": file_sha256(
+            root / str(h3p_config["paths"]["implementation_spec"])
+        ),
         "training_code_commit": manifest["training_code_commit"],
         "eligible_participants": int(prepared["eligible_participants"]),
         "eligible_origins": int(prepared["eligible_origins"]),
@@ -279,6 +326,14 @@ def report_h3p(
         "untouched_test_confirmation": False,
         "outer_test_used_for_h3p_model_selection": False,
         "baseline_outputs_reused": bool(manifest["baseline_outputs_reused"]),
+        "baseline_reuse_verification": {
+            "status": baseline_reuse_audit["status"],
+            "manifested_files": int(baseline_reuse_audit["baseline_entries"]),
+            "byte_identical_files": int(
+                baseline_reuse_audit["byte_identical_entries"]
+            ),
+            "audit_sha256": manifest["baseline_reuse_audit_sha256"],
+        },
         "folds": [
             {
                 "fold": int(item["fold"]),

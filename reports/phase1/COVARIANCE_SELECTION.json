@@ -1,11 +1,14 @@
 {
+  "artifact_status": "historical_protocol_compromised_comparator",
   "correction_reason": "The original implementation selected diagonal whenever the superiority gate failed. The frozen protocol instead requires the strongest valid bounded candidate when neither candidate clears that gate.",
   "diagonal_validation_score": 0.6064380596164243,
   "full_validation_score": 0.6021864387334307,
   "outer_test_metrics_used": false,
   "selected_covariance_mode": "full",
   "selection_scope": "fold_0_validation_only",
+  "protocol_limitation": "This global choice used a validation participant group that later served as outer test in the rotating five-fold protocol; it is not the active H3P selection procedure.",
   "source_selection_artifact_sha256": "5dd651032b68f9719589d7d5e95ee829faf5383bb744bf43670e6c77abf6402b",
   "success_gate_passed": false,
+  "superseded_by": "diana_h3p_fold_local_continuous_covariance_shrinkage",
   "tie_break": "diagonal"
 }

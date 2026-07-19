@@ -1,5 +1,7 @@
 # Hormonbench-mcPHASES v1 implementation specification
 
+> **Historical protocol notice (2026-07-19):** the custom-model covariance choice documented below used one global fold-0 validation group that later served as outer test in the rotating five-fold protocol. That custom result is therefore retained only as `historical_protocol_compromised_comparator` and is superseded by the fold-local Diana-H3P reference. The frozen benchmark task, folds, features, evaluator, and three classical baselines remain valid; the numerical record below is preserved as historical evidence.
+
 > **Corrected freeze outcome (2026-07-19):** neither covariance candidate passed the superiority gate. Full scored 0.602186 versus 0.606438 for diagonal on fold-0 validation, so the required strongest-valid fallback selected full. An initial diagonal execution was invalidated because the implementation incorrectly defaulted to diagonal on gate failure; its valid baseline outputs were reused byte-for-byte and only the custom path was recomputed. No outer-test metric selected this correction. Final config hash: `9015f03a3d354a7e973e56a4d0d538577c7d69b9fe638cf75cc9a4f0b9b07d7b`.
 
 **Status:** frozen before v1 implementation and official outer-test evaluation  

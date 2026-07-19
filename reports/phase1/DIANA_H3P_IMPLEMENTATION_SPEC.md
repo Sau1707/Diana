@@ -115,7 +115,7 @@ NumPy/SciPy is the complete reference backend. PyTorch is optional and lazily im
 
 Parity requires `rtol <= 1e-8` and `atol <= 1e-10` for diagonal, correlated, near-singular, K=0/3/7, batched, and interval cases. The backend profile times the complete Layer-2 path after OOF residuals exist, with warmups and repeated medians. PyTorch becomes canonical only if parity, deterministic repetition, scientific tests, memory limits, and at least 10% lower median end-to-end Layer-2 time all pass. Backend choice never uses target performance.
 
-**Backend freeze evidence:** on the real fold-0 development OOF residual set, seven complete-path repetitions gave median 1.181 s for NumPy CPU, 1.738 s for PyTorch CPU, and 1.315 s for PyTorch CUDA. Maximum absolute parity error was `8.89e-16`; repeated outputs were deterministic. PyTorch CUDA was 11.4% slower than NumPy and used approximately 2.83 GiB process RSS versus 268 MiB for NumPy. The canonical backend is frozen to `numpy`; PyTorch remains an optional tested backend.
+**Backend freeze evidence:** on the real fold-0 development OOF residual set, seven complete-path repetitions gave median 1.181 s for NumPy CPU, 1.738 s for PyTorch CPU, and 1.315 s for PyTorch CUDA. Maximum absolute parity error was `8.89e-16`; repeated outputs were deterministic. PyTorch CUDA was 11.4% slower than NumPy and used 2,829.99 MiB process RSS (about 2.76 GiB) versus 267.78 MiB for NumPy; direct peak GPU VRAM was not measured. The canonical backend is frozen to `numpy`; PyTorch remains an optional tested backend.
 
 ## Run discipline, privacy, and release
 

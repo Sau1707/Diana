@@ -23,7 +23,7 @@ paths:
   invalidated_checkpoint_dir: artifacts/private/v1/checkpoints/canonical_v1
   validation_dir: artifacts/private/v1/validation
   selection_artifact: reports/phase1/COVARIANCE_SELECTION.json
-  results_dir: results/v1
+  results_dir: results/v1/historical_protocol_compromised_comparator
 
 features:
   modalities:

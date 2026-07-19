@@ -36,6 +36,10 @@ Layer 2 learns fold-local continuously shrunk three-hormone covariance matrices.
 
 NumPy is the frozen canonical Layer-2 backend. Optional PyTorch CPU/CUDA paths match in float64, but complete-path profiling found them slower for this small 3×3 workload.
 
+## Canonical descriptive result
+
+The population median remained strongest in cold start (0.636527 versus 0.644181 for Diana-H3P) and at K=3 (0.610852 versus 0.616188). CatBoost was strongest at K=7 (0.607195 versus 0.608918). H3P therefore did not beat the strongest comparator at any official budget; at K=7 it improved LH and E3G relative to CatBoost but worsened PdG. These are post-hoc, descriptive, nonclinical results—not a superiority claim. See the [aggregate H3P report](results/v1/diana_h3p/RESULTS.md).
+
 ## Reproduce
 
 Obtain mcPHASES 1.0.0 directly from PhysioNet under its data-use agreement. In the intended Python 3.11 environment:

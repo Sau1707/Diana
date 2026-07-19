@@ -38,11 +38,10 @@ Code, tests, configuration, task/data/benchmark/model documentation, and aggrega
 
 Layer 1 is a participant-independent wearable prior: a fold-local convex stack of participant-equal population median, wearable Ridge, and CatBoost. Layer 2 uses zero, three, or seven authorized personal measurements to update a joint three-hormone empirical-Bayes posterior and emit 80% participant-block calibrated research prediction intervals.
 
-The canonical runner generates the verified aggregate result under `results/v1/diana_h3p/`. No performance claim is inserted before that run. H3P was designed after earlier Hormonbench v1 outer-test results had been inspected, so its result must be described as a **post-hoc evaluation of a newly frozen reference model on the existing protocol**, not a fresh untouched-test confirmation.
+The canonical runner generated the verified aggregate result under `results/v1/diana_h3p/`. Population median led cold start (0.636527 versus H3P 0.644181) and K=3 (0.610852 versus 0.616188); CatBoost led K=7 (0.607195 versus 0.608918). H3P did not beat the strongest comparator at any official budget. H3P was designed after earlier Hormonbench v1 outer-test results had been inspected, so this is a **post-hoc evaluation of a newly frozen reference model on the existing protocol**, not a fresh untouched-test confirmation or superiority claim.
 
 The former `joint_bayes_personalizer` is preserved only as an inactive `historical_protocol_compromised_comparator`. Its global fold-0 covariance selection used labels from participants who later served as outer test in another fold; it is not the active reference or a clean confirmatory comparator.
 
 ## Claims boundary
 
 This work is not clinically validated. It does not diagnose, predict serum hormones, verify ovulation, establish causal physiology, or support clinical decisions. Targets are participant-entered consumer urinary-monitor readings. The 20-participant cohort is small, adjacent origins are strongly correlated, and the research intervals have no IID clinical guarantee. Results cannot be generalized to all women or asserted for PCOS, pregnancy, perimenopause, menopause, hormonal contraception, other devices, or other populations without independent validation.
-
