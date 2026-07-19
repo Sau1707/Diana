@@ -114,25 +114,16 @@ The health endpoint is available at <http://localhost:8000/api/health>.
 
 ## Prototype Authentication
 
-FastAPI validates role-specific usernames and passwords and stores only the username and role in a signed, HTTP-only session cookie. Passwords are configured through environment variables and are never stored in the browser.
-
-Local defaults:
-
-- Participant: `participant` / `diana-participant`
-- Scientist: `scientist` / `diana-scientist`
+FastAPI accepts any non-empty username and password for the selected prototype role, then stores only the username and role in a signed, HTTP-only session cookie. Passwords are never stored in the browser or server session.
 
 Before a public deployment, configure these environment variables in Vercel:
 
 ```text
 DIANA_SESSION_SECRET=<long-random-secret>
-DIANA_PARTICIPANT_USERNAME=<participant-username>
-DIANA_PARTICIPANT_PASSWORD=<participant-password>
-DIANA_SCIENTIST_USERNAME=<scientist-username>
-DIANA_SCIENTIST_PASSWORD=<scientist-password>
 DIANA_SECURE_COOKIES=true
 ```
 
-Vercel sets `VERCEL_ENV` automatically, and DIANA automatically enables secure cookies in preview and production. The Vercel image generates a private signing secret when `DIANA_SESSION_SECRET` is not configured, so deployment can start with no additional setup. Set an explicit secret to keep sessions valid across image rebuilds, replace both demo passwords before public use, and add a Vercel Firewall rate-limit rule for `POST /api/auth/login`.
+Vercel sets `VERCEL_ENV` automatically, and DIANA automatically enables secure cookies in preview and production. The Vercel image generates a private signing secret when `DIANA_SESSION_SECRET` is not configured, so deployment can start with no additional setup. Set an explicit secret to keep sessions valid across image rebuilds.
 
 Generate a session secret locally with:
 
@@ -140,7 +131,7 @@ Generate a session secret locally with:
 python -c "import secrets; print(secrets.token_urlsafe(48))"
 ```
 
-These are environment-configured prototype accounts, not a registration system or persistent user database.
+This is prototype access control, not a registration system or persistent user database.
 
 ## Development
 

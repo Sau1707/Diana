@@ -22,12 +22,8 @@ class Settings(BaseSettings):
     session_max_age: int = 28800
     frontend_dist: Path = Path(__file__).resolve().parents[2] / "frontend" / "dist"
 
-    # Prototype account settings
+    # Session settings
     session_secret: SecretStr = SecretStr(DEFAULT_SESSION_SECRET)
-    scientist_username: str = "scientist"
-    scientist_password: SecretStr = SecretStr("diana-scientist")
-    participant_username: str = "participant"
-    participant_password: SecretStr = SecretStr("diana-participant")
 
     model_config = SettingsConfigDict(env_prefix="DIANA_", env_file=".env", extra="ignore")
 

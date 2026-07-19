@@ -43,11 +43,10 @@ export function ScientistLoginPage() {
   return (
     <AuthShell title="LOG IN" step={1}>
       <form onSubmit={submit} className="mx-auto grid w-full max-w-2xl gap-5">
-        <div><label className="mb-2 block font-semibold" htmlFor="scientist-username">Username</label><input id="scientist-username" name="username" required autoComplete="username" placeholder="scientist" /></div>
+        <div><label className="mb-2 block font-semibold" htmlFor="scientist-username">Username</label><input id="scientist-username" name="username" required autoComplete="username" placeholder="Enter your username" /></div>
         <div><label className="mb-2 block font-semibold" htmlFor="scientist-password">Password</label><input id="scientist-password" name="password" type="password" required minLength={1} autoComplete="current-password" /></div>
         <div><label className="mb-2 block font-semibold" htmlFor="scientist-institution">Institution</label><input id="scientist-institution" required placeholder="Demo research institution" /></div>
         <p className="text-sm leading-6 text-[var(--muted)]">Researcher access is subject to institutional verification and governance review.</p>
-        {import.meta.env.DEV && <div className="rounded-2xl bg-[var(--green-soft)] p-4 text-sm"><strong>Local demo account</strong><p className="mt-1 text-[var(--muted)]">Username: scientist · Password: diana-scientist</p></div>}
         {requestSent && <p className="rounded-2xl bg-[var(--green-soft)] p-4 text-sm" role="status">Demo access request recorded. No message was sent outside this prototype.</p>}
         {error !== "" && <p className="rounded-2xl bg-red-50 p-4 text-sm font-semibold text-[var(--error)]" role="alert">{error}</p>}
         <div className="flex flex-wrap items-center justify-between gap-4"><button type="button" onClick={() => setRequestSent(true)} className="min-h-11 rounded-full px-2 text-sm font-semibold underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black">Request researcher access</button><Button type="submit" size="large" disabled={submitting}>{submitting ? "Signing in…" : "Continue"} <ArrowRight className="size-6" aria-hidden="true" /></Button></div>

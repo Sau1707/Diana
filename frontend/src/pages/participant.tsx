@@ -59,9 +59,8 @@ export function ParticipantLoginPage() {
   return (
     <AuthShell title="LOG IN" step={1}>
       <form onSubmit={submit} className="mx-auto grid w-full max-w-2xl gap-5">
-        <div><label className="mb-2 block font-semibold" htmlFor="participant-username">Username</label><input id="participant-username" name="username" autoComplete="username" required placeholder="participant" /></div>
+        <div><label className="mb-2 block font-semibold" htmlFor="participant-username">Username</label><input id="participant-username" name="username" autoComplete="username" required placeholder="Enter your username" /></div>
         <div><label className="mb-2 block font-semibold" htmlFor="participant-password">Password</label><input id="participant-password" name="password" type="password" minLength={1} autoComplete="current-password" required /></div>
-        {import.meta.env.DEV && <div className="rounded-2xl bg-[var(--purple-soft)] p-4 text-sm"><strong>Local demo account</strong><p className="mt-1 text-[var(--muted)]">Username: participant · Password: diana-participant</p></div>}
         {error !== "" && <p className="rounded-2xl bg-red-50 p-4 text-sm font-semibold text-[var(--error)]" role="alert">{error}</p>}
         <div className="mt-3 flex justify-end"><Button type="submit" size="large" disabled={submitting}>{submitting ? "Signing in…" : "Sign in"}<ArrowRight className="size-6" aria-hidden="true" /></Button></div>
         <PrivacyNote />
