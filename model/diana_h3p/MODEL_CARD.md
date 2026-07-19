@@ -1,0 +1,58 @@
+# Diana-H3P model card
+
+**Working identifier:** `diana_h3p`  
+**Full name:** Diana-H3P: Budget-Aware Hierarchical Tri-Hormone Personalizer  
+**Role:** one compact `custom_reference` for Hormonbench-mcPHASES v1
+
+## Role and evaluation status
+
+Hormonbench—the Challenge Layer 01 Data & Benchmark Infrastructure contribution—is the reusable project asset. Diana-H3P is a Challenge Layer 02 reference implementation showing how the frozen benchmark supports participant-independent wearable forecasting, limited-measurement personalization, and research uncertainty. It is not a fourth classical baseline, a consumer application, or an Application Infrastructure contribution.
+
+Diana-H3P was specified after the team had inspected earlier Hormonbench v1 outer-test results. Its canonical result is therefore a **post-hoc evaluation of a newly frozen model on the existing protocol**, not a fresh untouched-test confirmation. Population median led cold start (0.636527 versus H3P 0.644181) and K=3 (0.610852 versus 0.616188); CatBoost led K=7 (0.607195 versus 0.608918). H3P did not beat the strongest comparator at any official budget, so this card makes no superiority claim.
+
+The prior `joint_bayes_personalizer` remains in the repository as an inactive `historical_protocol_compromised_comparator`. Its global fold-0 covariance choice used labels from a participant group that later served as outer test in another rotating fold. Its source and aggregate historical evidence are preserved, but it is not the active reference and is not a clean confirmatory comparator.
+
+## Frozen benchmark task
+
+Diana-H3P consumes only the Hormonbench-prepared v1 contract:
+
+- 14 causal calendar days, `t-13` through `t`;
+- genuinely observed participant-entered urinary LH, E3G, and PdG at `t+1`;
+- 20 eligible Interval-2 participants and 1,509 origins;
+- five deterministic participant groups, with a 16-participant development set and four untouched outer-test participants per fold;
+- cold-start evaluation with no personal hormone labels; and
+- K=0/3/7 personalization scored on the identical 1,369-origin common suffix.
+
+It cannot use participant/sample identifiers, absolute time, menstrual-calendar state, self-reports, hormone history, Mira labels, target-derived events, future values, backward filling, centered windows, or cross-cutoff interpolation as predictors.
+
+## Layer 1: participant-independent wearable prior
+
+For each hormone, Layer 1 forms a convex stack of the participant-equal population median, wearable Ridge, and CatBoost. Nonnegative weights sum to one; there is no free intercept. Each outer fold learns its own weights on a deterministic 0.10 simplex grid using participant-macro log1p-MAE from genuinely participant-disjoint development OOF predictions.
+
+The 16 development participants are cross-fitted in four existing participant groups. Median and Ridge are fitted only on the other 12 participants. CatBoost stopping is nested again within those 12 participants using a deterministic 8/4 inner train/validation rotation, followed by a fixed-tree refit on all 12. Preprocessing, filtering, weighting, and stopping never see the OOF group or outer-test participants.
+
+## Layer 2: budget-aware joint personalization
+
+Layer 2 models the three-dimensional log1p residual left by Layer 1. It learns fold-local quantities only from that outer fold's 16 development participants:
+
+- `Sigma_a`, a covariance for persistent participant residual offsets;
+- `Psi_3` and `Psi_7`, calibration-mean error covariances reproduced from the exact earliest-three and earliest-seven chronological protocols; and
+- a future residual covariance for research prediction intervals.
+
+The calibration covariances do not assume independent observations and are not approximated as a daily covariance divided by K. Each covariance uses one fixed continuous Ledoit-Wolf correlation-shrinkage estimator and a deterministic positive-semidefinite eigenvalue floor. There is no global diagonal-versus-full decision.
+
+K=0 has an exactly zero personal offset and exactly reproduces Layer 1 on the common suffix. K=3 and K=7 may use only their authorized early complete three-hormone observations. Later truth remains evaluator-only. Posterior calculations use stable Cholesky/linear solves and never an explicit matrix inverse.
+
+## Research uncertainty
+
+Diana-H3P emits 80% participant-block calibrated research prediction intervals. Multipliers are learned using leave-one-participant development procedures with participant-balanced quantiles. Intervals are finite, ordered, nonnegative in log1p space, and secondary to point-prediction metrics.
+
+These are not clinical confidence intervals and do not carry an IID finite-sample guarantee. The cohort is small, participant histories overlap strongly, and adjacent forecast origins share most of their input window.
+
+## Numerical backend
+
+NumPy float64 is the canonical Layer-2 backend. Complete representative Layer-2 profiling, with numerical parity passing at the frozen tolerance, measured median times of 1.181 seconds for NumPy CPU, 1.738 seconds for PyTorch CPU, and 1.315 seconds for PyTorch CUDA. Neither PyTorch backend was at least 10% faster than NumPy, so GPU acceleration was not selected. The recorded memory values are process RSS, not direct GPU-VRAM peaks. PyTorch remains an optional parity-tested backend and does not train a neural network or alter the statistical model.
+
+## Intended and prohibited use
+
+The model is a reproducible research reference for this benchmark contract. It is not clinically validated and must not be used for diagnosis, clinical decisions, fertility or ovulation determination, or prediction of serum hormone concentrations. Targets are participant-entered consumer urinary-monitor readings—not clinical gold-standard measurements. Results cannot be generalized to all women or asserted for PCOS, pregnancy, perimenopause, menopause, hormonal contraception, other devices, or other populations without independent validation.

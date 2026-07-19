@@ -1,0 +1,113 @@
+task:
+  id: hormonbench_mcphases_interval2_nextday_v1
+  version: 1.0.0
+  dataset: mcPHASES-1.0.0
+  interval: 2024
+  history_days: 14
+  forecast_days: 1
+  target_space: log1p
+  targets: [lh, e3g, pdg]
+
+paths:
+  data_root: dataset/mcphases-a-dataset-of-physiological-hormonal-and-self-reported-events-and-symptoms-for-menstrual-health-tracking-with-wearables-1.0.0
+  v0_split_manifest: artifacts/private/splits/hormonbench_mcphases_interval2_nextday_v0.json
+  prepared_dir: artifacts/private/v1/prepared/hormonbench_mcphases_interval2_nextday_v1_1.0.0
+  fold_dir: artifacts/private/v1/folds
+  calibration_dir: artifacts/private/v1/calibration
+  prediction_run_dir: artifacts/private/v1/predictions/canonical_v1_full
+  prediction_manifest: artifacts/private/v1/predictions/canonical_v1_full/manifest.json
+  checkpoint_dir: artifacts/private/v1/checkpoints/canonical_v1_full
+  participant_metrics_dir: artifacts/private/v1/participant_metrics/canonical_v1_full
+  invalidated_prediction_run_dir: artifacts/private/v1/predictions/canonical_v1
+  invalidated_prediction_manifest: artifacts/private/v1/predictions/canonical_v1/manifest.json
+  invalidated_checkpoint_dir: artifacts/private/v1/checkpoints/canonical_v1
+  validation_dir: artifacts/private/v1/validation
+  selection_artifact: reports/phase1/COVARIANCE_SELECTION.json
+  results_dir: results/v1/historical_protocol_compromised_comparator
+
+features:
+  modalities:
+    - active_minutes
+    - computed_temperature_end_day
+    - hrv_daily_aggregate
+    - respiratory_rate_summary
+    - sleep_score
+    - weekend_state
+  summary_statistics: [last, mean, std, min, max, slope, coverage, time_since, missing_current]
+  selected_lags: [0, 1, 3, 6, 13]
+  exclude_self_reports: true
+  exclude_menstrual_calendar: true
+  exclude_absolute_time: true
+
+folds:
+  seed: 20260719
+  groups: 5
+  participants_per_group: 4
+  balance_candidate_permutations: 20000
+  balance_quantities: [eligible_origin_count, approved_wearable_day_coverage]
+  group0_source: v0_test
+  group1_source: v0_validation
+
+personalization:
+  budgets: [0, 3, 7]
+  calibration_source: eligible_forecast_targets
+  common_suffix_budget: 7
+  scoring_rule: origin_day_at_or_after_seventh_calibration_target_day
+  minimum_scoring_origins: 1
+
+preprocessing:
+  missingness_drop_threshold: 0.95
+  drop_all_missing: true
+  drop_constant: true
+  imputation: train_median
+  ridge_standardization: train_standard
+
+models:
+  seed: 20260719
+  population_median:
+    participant_equal: true
+  wearable_ridge:
+    alpha: 25.0
+  catboost:
+    iterations: 250
+    validation_iterations: 250
+    depth: 5
+    learning_rate: 0.04
+    l2_leaf_reg: 5.0
+    early_stopping_rounds: 40
+    loss_function: RMSE
+    eval_metric: MAE
+    thread_count: 4
+
+custom:
+  working_name: joint_bayes_personalizer
+  lambda_grid_step: 0.05
+  covariance_candidates: [diagonal, full]
+  selected_covariance_mode: full
+  selection_scope: fold_0_validation_only
+  selection_success_gate_passed: false
+  selection_artifact_sha256: ad673e23dc541367d0aad176005baec237485e6452aa6f4e7519f6ee43f459f2
+  covariance_shrinkage: 0.20
+  eigenvalue_floor: 0.000001
+  interval_level: 0.80
+  conformal_quantile: 0.80
+  validation_selection:
+    budgets: [3, 7]
+    minimum_relative_gain: 0.03
+    minimum_hormones_improved: 2
+    minimum_participants_improved: 3
+    maximum_hormone_regression: 0.02
+    tie_break: diagonal
+
+evaluation:
+  primary_metric: participant_macro_log1p_mae
+  robust_scale: participant_balanced_iqr
+  reference_model: population_median
+  prediction_space: log1p
+  fold_dispersion: sample_standard_deviation
+
+runtime:
+  canonical_run_id: canonical_v1_full
+  device: CPU
+  allow_test_tuning: false
+  allow_runtime_install: false

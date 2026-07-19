@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520">
+<rect width="100%" height="100%" fill="white"/>
+<text x="450" y="30" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="600">Held-out participant-macro log1p MAE</text>
+<line x1="85" y1="415.00" x2="875" y2="415.00" stroke="#e5e7eb"/>
+<text x="75" y="419.00" text-anchor="end" font-family="sans-serif" font-size="12">0.000</text>
+<line x1="85" y1="343.00" x2="875" y2="343.00" stroke="#e5e7eb"/>
+<text x="75" y="347.00" text-anchor="end" font-family="sans-serif" font-size="12">0.166</text>
+<line x1="85" y1="271.00" x2="875" y2="271.00" stroke="#e5e7eb"/>
+<text x="75" y="275.00" text-anchor="end" font-family="sans-serif" font-size="12">0.332</text>
+<line x1="85" y1="199.00" x2="875" y2="199.00" stroke="#e5e7eb"/>
+<text x="75" y="203.00" text-anchor="end" font-family="sans-serif" font-size="12">0.498</text>
+<line x1="85" y1="127.00" x2="875" y2="127.00" stroke="#e5e7eb"/>
+<text x="75" y="131.00" text-anchor="end" font-family="sans-serif" font-size="12">0.663</text>
+<line x1="85" y1="55.00" x2="875" y2="55.00" stroke="#e5e7eb"/>
+<text x="75" y="59.00" text-anchor="end" font-family="sans-serif" font-size="12">0.829</text>
+<rect x="139.99" y="186.51" width="45.36" height="228.49" fill="#2563eb"/>
+<rect x="193.99" y="185.98" width="45.36" height="229.02" fill="#d97706"/>
+<rect x="247.99" y="107.03" width="45.36" height="307.97" fill="#059669"/>
+<text x="216.67" y="443" text-anchor="middle" font-family="sans-serif" font-size="13">catboost</text>
+<rect x="403.32" y="188.42" width="45.36" height="226.58" fill="#2563eb"/>
+<rect x="457.32" y="181.50" width="45.36" height="233.50" fill="#d97706"/>
+<rect x="511.32" y="93.57" width="45.36" height="321.43" fill="#059669"/>
+<text x="480.00" y="443" text-anchor="middle" font-family="sans-serif" font-size="13">population_median</text>
+<rect x="666.65" y="180.46" width="45.36" height="234.54" fill="#2563eb"/>
+<rect x="720.65" y="175.18" width="45.36" height="239.82" fill="#d97706"/>
+<rect x="774.65" y="103.25" width="45.36" height="311.75" fill="#059669"/>
+<text x="743.33" y="443" text-anchor="middle" font-family="sans-serif" font-size="13">causal_calendar</text>
+<rect x="650" y="45" width="13" height="13" fill="#2563eb"/>
+<text x="669" y="56" font-family="sans-serif" font-size="12">LH</text>
+<rect x="725" y="45" width="13" height="13" fill="#d97706"/>
+<text x="744" y="56" font-family="sans-serif" font-size="12">E3G</text>
+<rect x="800" y="45" width="13" height="13" fill="#059669"/>
+<text x="819" y="56" font-family="sans-serif" font-size="12">PDG</text>
+<text x="20" y="235.0" text-anchor="middle" transform="rotate(-90 20 235.0)" font-family="sans-serif" font-size="13">Lower is better</text>
+</svg>

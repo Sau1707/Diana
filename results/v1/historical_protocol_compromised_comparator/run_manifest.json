@@ -1,0 +1,258 @@
+{
+  "baselines": [
+    "population_median",
+    "wearable_ridge",
+    "catboost"
+  ],
+  "claims": {
+    "clinical_validation": false,
+    "descriptive_only": true,
+    "targets": "participant-entered at-home urinary monitor readings",
+    "v0_status": "superseded/provisional"
+  },
+  "common_suffix_origins": 1369,
+  "config_hash": "9015f03a3d354a7e973e56a4d0d538577c7d69b9fe638cf75cc9a4f0b9b07d7b",
+  "custom_reference": "joint_bayes_personalizer",
+  "eligible_origins": 1509,
+  "eligible_participants": 20,
+  "environment": {
+    "compute_device": "CPU",
+    "cpu": "Intel64 Family 6 Model 158 Stepping 10, GenuineIntel",
+    "gpu": {
+      "available": true,
+      "driver_version": "532.09",
+      "memory_total_mb": 4096,
+      "name": "NVIDIA GeForce GTX 1650",
+      "used": false
+    },
+    "logical_cpu_count": 8,
+    "os": "Windows-10-10.0.26200-SP0",
+    "packages": {
+      "PyYAML": "6.0.3",
+      "catboost": "1.2.10",
+      "matplotlib": "3.11.1",
+      "numpy": "2.4.4",
+      "pandas": "3.0.3",
+      "psutil": "7.2.2",
+      "scikit-learn": "1.9.0",
+      "scipy": "1.17.1"
+    },
+    "physical_cpu_count": 4,
+    "python_executable": "python.exe (Conda environment ai)",
+    "python_version": "3.11.15"
+  },
+  "fold_hash": "f4c350c291c060638324c96b694f3af0a811180ba2f182883d5f4746ca37dbf1",
+  "folds": [
+    {
+      "catboost_best_iteration": {
+        "e3g": 0,
+        "lh": 0,
+        "pdg": 60
+      },
+      "catboost_best_validation_score": {
+        "e3g": 0.39026896252952487,
+        "lh": 0.3732884941142147,
+        "pdg": 0.7073559219600275
+      },
+      "catboost_tree_count": {
+        "e3g": 1,
+        "lh": 1,
+        "pdg": 61
+      },
+      "common_suffix_origins": 273,
+      "custom_lambda": {
+        "e3g": 0.0,
+        "lh": 0.0,
+        "pdg": 0.0
+      },
+      "development_participants": 16,
+      "fold": 0,
+      "retained_feature_count": {
+        "catboost": 454,
+        "wearable_ridge": 454
+      },
+      "runtime_seconds": 90.66026489999786,
+      "test_origins": 301,
+      "test_participants": 4,
+      "train_participants": 12,
+      "validation_participants": 4
+    },
+    {
+      "catboost_best_iteration": {
+        "e3g": 234,
+        "lh": 6,
+        "pdg": 58
+      },
+      "catboost_best_validation_score": {
+        "e3g": 0.4029645952774112,
+        "lh": 0.41451736641686243,
+        "pdg": 0.7066588136938274
+      },
+      "catboost_tree_count": {
+        "e3g": 235,
+        "lh": 7,
+        "pdg": 59
+      },
+      "common_suffix_origins": 274,
+      "custom_lambda": {
+        "e3g": 0.1,
+        "lh": 0.0,
+        "pdg": 0.1
+      },
+      "development_participants": 16,
+      "fold": 1,
+      "retained_feature_count": {
+        "catboost": 454,
+        "wearable_ridge": 454
+      },
+      "runtime_seconds": 169.06757859999925,
+      "test_origins": 302,
+      "test_participants": 4,
+      "train_participants": 12,
+      "validation_participants": 4
+    },
+    {
+      "catboost_best_iteration": {
+        "e3g": 45,
+        "lh": 42,
+        "pdg": 30
+      },
+      "catboost_best_validation_score": {
+        "e3g": 0.37092116845847756,
+        "lh": 0.4049084626348597,
+        "pdg": 0.6602378541121038
+      },
+      "catboost_tree_count": {
+        "e3g": 46,
+        "lh": 43,
+        "pdg": 31
+      },
+      "common_suffix_origins": 289,
+      "custom_lambda": {
+        "e3g": 0.0,
+        "lh": 0.15,
+        "pdg": 0.35
+      },
+      "development_participants": 16,
+      "fold": 2,
+      "retained_feature_count": {
+        "catboost": 454,
+        "wearable_ridge": 454
+      },
+      "runtime_seconds": 90.50988630000211,
+      "test_origins": 317,
+      "test_participants": 4,
+      "train_participants": 12,
+      "validation_participants": 4
+    },
+    {
+      "catboost_best_iteration": {
+        "e3g": 0,
+        "lh": 0,
+        "pdg": 0
+      },
+      "catboost_best_validation_score": {
+        "e3g": 0.39409814262552495,
+        "lh": 0.4471585325209375,
+        "pdg": 0.553153685894453
+      },
+      "catboost_tree_count": {
+        "e3g": 1,
+        "lh": 1,
+        "pdg": 1
+      },
+      "common_suffix_origins": 289,
+      "custom_lambda": {
+        "e3g": 0.0,
+        "lh": 0.0,
+        "pdg": 0.1
+      },
+      "development_participants": 16,
+      "fold": 3,
+      "retained_feature_count": {
+        "catboost": 454,
+        "wearable_ridge": 454
+      },
+      "runtime_seconds": 46.43364360000123,
+      "test_origins": 317,
+      "test_participants": 4,
+      "train_participants": 12,
+      "validation_participants": 4
+    },
+    {
+      "catboost_best_iteration": {
+        "e3g": 24,
+        "lh": 161,
+        "pdg": 74
+      },
+      "catboost_best_validation_score": {
+        "e3g": 0.5478906938404995,
+        "lh": 0.49137463605402515,
+        "pdg": 0.6948332729749861
+      },
+      "catboost_tree_count": {
+        "e3g": 25,
+        "lh": 162,
+        "pdg": 75
+      },
+      "common_suffix_origins": 244,
+      "custom_lambda": {
+        "e3g": 0.0,
+        "lh": 0.75,
+        "pdg": 0.0
+      },
+      "development_participants": 16,
+      "fold": 4,
+      "retained_feature_count": {
+        "catboost": 454,
+        "wearable_ridge": 454
+      },
+      "runtime_seconds": 133.41064160000678,
+      "test_origins": 272,
+      "test_participants": 4,
+      "train_participants": 12,
+      "validation_participants": 4
+    }
+  ],
+  "git": {
+    "branch": "main",
+    "commit": "uncommitted",
+    "working_tree_clean": false
+  },
+  "input_schema_hash": "30b91bb7085bfc2e2efb29824f48f18bc2171b8157a34f4ee080172dad520a82",
+  "outputs": {
+    "RESULTS.md": "df770fdceb4290a5689f7909de5b41c0687afce98347993cf26bed6656f44f5f",
+    "cold_start/fold_metrics.csv": "866060477aa0b91811032fcc6888529644e3a180c454a7e687b2b55cf589ad91",
+    "cold_start/leaderboard.csv": "49b77e704c12d08ce1346eb4340515fef037fb185fbf42ae1ca9c98da46755dd",
+    "few_shot/leaderboard_by_budget.csv": "8f6e53ef425340dfb2ac9b9bcca436af38218f663a4b395281415f59849d49ad",
+    "figures/cold_start_leaderboard.svg": "68b479cde3fb8959a20cc2528ebcca32f256390cf8a2b60dd6eedf80bc2edd68",
+    "figures/measurement_budget_curve.svg": "9452cd6f38901357c70408b79ee711e3778064fc0e99df451e31421be3ed7d1f",
+    "figures/uncertainty_summary.svg": "123e9ab1992128f2de19b7393f2ec2eae80943309a50d860c5ca39d91d6293ce",
+    "metrics.json": "ce3c00301705ab16829647c138a050eba01b5a9048c0dcdf395837b35a3ec70b"
+  },
+  "protocol_correction": {
+    "applied": true,
+    "baseline_outputs_reused": true,
+    "outer_test_metrics_used_for_correction": false,
+    "reason": "strongest valid candidate after failed superiority gate"
+  },
+  "reference_model": "population_median",
+  "runtime": {
+    "baseline_fit_oof_seconds": 363.51395300000877,
+    "correction_only_seconds": 166.56806199999846,
+    "custom_fit_calibration_seconds": 163.09020200000668,
+    "evaluation_seconds": 6.05569850000029,
+    "invalidated_diagonal_run_seconds": 446.8721966999947,
+    "model_seconds": 530.0820150000072,
+    "peak_rss_mb": 376.29296875,
+    "prediction_write_seconds": 3.1765947000021697,
+    "preparation_seconds": 22.686828999998397,
+    "report_seconds": 2.209864299999026,
+    "total_pipeline_seconds": 561.034406800005
+  },
+  "schema_version": "1.0.0",
+  "selected_covariance_mode": "full",
+  "task_id": "hormonbench_mcphases_interval2_nextday_v1",
+  "task_spec_hash": "1783561d82980e55ff0a3fa3cb026a2598afcc4f6eec1a6c456d117e70d6c6e5",
+  "task_version": "1.0.0"
+}

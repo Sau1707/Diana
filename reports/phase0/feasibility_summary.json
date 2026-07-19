@@ -1,0 +1,137 @@
+{
+  "decision": "YES WITH MODIFICATIONS",
+  "recommended_task": "Strict next-day forecasting of genuinely measured urinary LH, E3G, and PdG in Interval 2 using information available through end of day t; masked per-target loss/metrics and no interpolated truth.",
+  "targets": [
+    "urinary LH (Mira, mIU/mL)",
+    "urinary E3G in column estrogen (Mira, ng/mL)",
+    "urinary PdG (Mira, mcg/mL)"
+  ],
+  "history_days": 14,
+  "forecast_days": 1,
+  "eligible_participants": {
+    "primary_all_three_interval_2": 20,
+    "secondary_lh_e3g_both_intervals": 42,
+    "longitudinal_returning_participants": 20
+  },
+  "eligible_origins": {
+    "primary_next_day_all_three_14d_interval_2": 1509,
+    "next_day_any_target_14d_all_intervals": 4412,
+    "secondary_7d_complete_all_three_14d_interval_2": 1217,
+    "secondary_7d_masked_14d_interval_2": 1556,
+    "next_day_all_three_28d_interval_2": 1202
+  },
+  "split_recommendation": "Primary: one fixed participant-disjoint 12/4/4 train/validation/test split among the 20 Interval-2 participants, balanced by origin count; never split a participant's days across sets. Secondary shift diagnostic: fit/tune without 2024 labels, train on 2022 and test on 2024 for LH/E3G only; all 2024 participants return, so this is not unseen-participant evaluation.",
+  "lite_modalities": [
+    "active_minutes",
+    "computed_temperature aligned to sleep_end/wake day",
+    "daily aggregates of HRV details",
+    "positive respiratory-rate summary with sentinel masks",
+    "sleep_score with interval-specific missingness masks including its RHR field",
+    "subject static metadata",
+    "matching-interval height/weight when present",
+    "lagged genuinely measured hormones",
+    "lagged self-reports when present",
+    "causal calendar features from bleeding onset already known by cutoff"
+  ],
+  "postponed_modalities": [
+    "raw heart_rate",
+    "calories",
+    "distance",
+    "raw steps",
+    "wrist_temperature",
+    "sleep events",
+    "glucose (2022 only; structural non-collection in 2024)",
+    "estimated oxygen variation",
+    "exercise events",
+    "active-zone events",
+    "resting_heart_rate.csv pending 2024 provenance",
+    "demographic_vo2_max pending 2024 provenance",
+    "time_in_heart_rate_zones pending interval mapping",
+    "stress_score as optional later feature due 12.446% valid 2024 target-day coverage"
+  ],
+  "baseline_plan": [
+    "global train-set median on log1p targets",
+    "causal calendar/harmonic regression",
+    "masked Ridge/ElasticNet tabular history baseline",
+    "bounded-iteration CPU CatBoost with early stopping"
+  ],
+  "small_temporal_model": "Justified only as a compact fifth reference (small GRU-D or causal TCN, one seed, early stopping) after repairing the igl OpenMP collision; it is not required for the first defensible v0.",
+  "runtime_estimates": {
+    "measured": {
+      "target_full_read_seconds": 0.0976,
+      "active_minutes_full_read_seconds": 0.0091,
+      "computed_temperature_full_read_seconds": 0.0275,
+      "hrv_projected_full_read_seconds": 0.8762,
+      "glucose_projected_full_read_seconds": 1.3124,
+      "heart_rate_bounded_128MiB_read_seconds": 3.4082,
+      "heart_rate_bounded_throughput_MiB_s": 37.5563
+    },
+    "estimated": {
+      "lite_daily_feature_table": {
+        "wall_time": "10-20 s",
+        "peak_memory": "<150 MB"
+      },
+      "expanded_raw_stream_aggregation": {
+        "wall_time": "8-20 min streaming",
+        "peak_memory": "1-3 GB"
+      },
+      "global_median": {
+        "wall_time": "<1 s",
+        "peak_memory": "<100 MB"
+      },
+      "causal_calendar_harmonic": {
+        "wall_time": "1-3 s",
+        "peak_memory": "<150 MB"
+      },
+      "ridge_or_elasticnet": {
+        "wall_time": "2-10 s",
+        "peak_memory": "<300 MB"
+      },
+      "catboost_cpu": {
+        "wall_time": "20-90 s",
+        "peak_memory": "<1 GB"
+      },
+      "small_grud_or_tcn": {
+        "wall_time": "5-15 min CPU after environment repair; GPU unverified/unavailable in current igl process",
+        "peak_memory": "0.5-1.5 GB"
+      },
+      "exact_multioutput_gp": {
+        "wall_time": "30-120+ min with repeated cubic factorizations",
+        "peak_memory": "2-6 GB; not justified"
+      },
+      "complete_core_v0_one_split_one_seed": {
+        "wall_time": "5-10 min",
+        "peak_memory": "<1.5 GB"
+      },
+      "core_v0_plus_temporal_reference": {
+        "wall_time": "10-25 min after environment repair",
+        "peak_memory": "<2 GB"
+      }
+    }
+  },
+  "leakage_blacklist": [
+    "lh, estrogen, or pdg from prediction day t+1 or any later day; same-day target for a strict forecast",
+    "phase and any Mira fertile-window/phase label derived from hormone patterns",
+    "future menstrual flow/events or future symptom self-reports",
+    "completed proprietary-phase-defined cycle length, cycle percentage, or cycle number requiring future phases",
+    "LH-surge/PdG-rise labels or other events derived from the evaluation targets at or after the forecast horizon",
+    "future interpolation, backward filling, bidirectional imputation, or smoothing across the cutoff",
+    "centered rolling windows or normalization/statistics fit using validation/test/future observations",
+    "participant id as an unrestricted predictor (retain only for joins, grouping, and participant-disjoint splits)",
+    "sleep/temperature/respiratory/HRV summaries whose end time extends beyond the prediction cutoff",
+    "exercise last_modified_day_in_study/last_modified_timestamp when modification occurred after cutoff",
+    "sleep.levels events after cutoff and any completed-session summary not yet available at cutoff",
+    "opaque filtered_demographic_vo2_max or revised daily records until their temporal provenance is established",
+    "calendar cycle day computed from a future bleeding onset; only latest onset already known at cutoff is allowed"
+  ],
+  "unresolved_questions": [
+    "Urine-test timestamps are absent, so same-day ordering versus daily summaries is unknown.",
+    "The exact device/app provenance of phase and any fertile-window thresholds is not supplied as clinical ground truth.",
+    "2024 resting-heart-rate and VO2 tables contain conflicting cross-participant repeated signatures without revision timestamps.",
+    "2024 time-in-heart-rate-zone mapping appears inconsistent with the supplied README.",
+    "Several 2024 compact sensor tables contain exact cross-participant signatures; export duplication/misattribution is unresolved.",
+    "Units/transforms for HRV spectral values, VO2 estimates, oxygen-variation values, and calories are incompletely documented.",
+    "2024 self-report encodings differ and coverage is nearly absent.",
+    "PyTorch 2.5.1+cu121 is installed and the GTX 1650 is visible to nvidia-smi, but an OpenMP DLL collision prevents a normal torch import in igl; CUDA execution is therefore not verified."
+  ]
+}

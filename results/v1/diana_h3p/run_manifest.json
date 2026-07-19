@@ -1,0 +1,813 @@
+{
+  "backend": {
+    "canonical": "numpy",
+    "profile": {
+      "minimum_speedup_fraction": 0.1,
+      "parity_atol": 1e-10,
+      "parity_rtol": 1e-08,
+      "recommended_canonical_backend": "numpy",
+      "repetitions": 7,
+      "results": {
+        "numpy": {
+          "available": true,
+          "bitwise_deterministic_repetitions": true,
+          "complete_layer2_includes": [
+            "covariance_estimation",
+            "leave_one_participant_interval_calibration",
+            "posterior_updates",
+            "interval_generation"
+          ],
+          "maximum_absolute_parity_error": 0.0,
+          "median_seconds": 1.180561499997566,
+          "parity_with_numpy": true,
+          "peak_process_rss_mb": 267.77734375,
+          "timings_seconds": [
+            1.256544700001541,
+            1.1775582999980543,
+            1.1610700000019278,
+            1.1992131000006339,
+            1.201404999999795,
+            1.180561499997566,
+            1.1606353000024683
+          ]
+        },
+        "torch_cpu": {
+          "available": true,
+          "bitwise_deterministic_repetitions": true,
+          "complete_layer2_includes": [
+            "covariance_estimation",
+            "leave_one_participant_interval_calibration",
+            "posterior_updates",
+            "interval_generation"
+          ],
+          "maximum_absolute_parity_error": 4.440892098500626e-16,
+          "median_seconds": 1.7381220999959623,
+          "parity_with_numpy": true,
+          "peak_process_rss_mb": 554.98828125,
+          "timings_seconds": [
+            1.6913827000025776,
+            1.7394160999974702,
+            1.697573299999931,
+            1.9080028999960632,
+            1.7381220999959623,
+            1.7988689999983762,
+            1.723799899998994
+          ]
+        },
+        "torch_cuda": {
+          "available": true,
+          "bitwise_deterministic_repetitions": true,
+          "complete_layer2_includes": [
+            "covariance_estimation",
+            "leave_one_participant_interval_calibration",
+            "posterior_updates",
+            "interval_generation"
+          ],
+          "maximum_absolute_parity_error": 8.881784197001252e-16,
+          "median_seconds": 1.3153473999991547,
+          "parity_with_numpy": true,
+          "peak_process_rss_mb": 2829.98828125,
+          "timings_seconds": [
+            1.3057050999996136,
+            1.3153473999991547,
+            1.3004988999964553,
+            1.4836874999964493,
+            1.306307899998501,
+            1.3276713000013842,
+            1.3358622000014293
+          ]
+        }
+      },
+      "selection_uses_target_performance": false,
+      "warmups": 2
+    }
+  },
+  "baseline_outputs_reused": true,
+  "baseline_reuse_verification": {
+    "audit_sha256": "a10ed11b4f43d80fbc7387955c94e7b1e535a68b7de639bf17e348d508b622cc",
+    "byte_identical_files": 60,
+    "manifested_files": 60,
+    "status": "passed"
+  },
+  "baselines": [
+    "population_median",
+    "wearable_ridge",
+    "catboost"
+  ],
+  "claims": {
+    "clinical_validation": false,
+    "descriptive_only": true,
+    "research_intervals_not_clinical_confidence": true,
+    "targets": "participant-entered at-home urinary monitor readings"
+  },
+  "common_suffix_origins": 1369,
+  "custom_reference": "diana_h3p",
+  "eligible_origins": 1509,
+  "eligible_participants": 20,
+  "environment": {
+    "cpu": "Intel64 Family 6 Model 158 Stepping 10, GenuineIntel",
+    "gpu": {
+      "available": true,
+      "driver_version": "532.09",
+      "memory_total_mb": 4096,
+      "name": "NVIDIA GeForce GTX 1650",
+      "used_for_canonical_model": false
+    },
+    "logical_cpu_count": 8,
+    "os": "Windows-10-10.0.26200-SP0",
+    "packages": {
+      "PyYAML": "6.0.3",
+      "catboost": "1.2.10",
+      "matplotlib": "3.11.1",
+      "numpy": "2.4.4",
+      "pandas": "3.0.3",
+      "psutil": "7.2.2",
+      "scikit-learn": "1.9.0",
+      "scipy": "1.17.1",
+      "torch": "2.5.1+cu118"
+    },
+    "physical_cpu_count": 4,
+    "python_executable": "python.exe (Conda environment ai)",
+    "python_version": "3.11.15"
+  },
+  "evaluator_sha256": "5c1f3cba9337b0389407d31969c738bf6aae29773447556267062434b5fbf2ec",
+  "fold_hash": "f4c350c291c060638324c96b694f3af0a811180ba2f182883d5f4746ca37dbf1",
+  "folds": [
+    {
+      "common_suffix_origins": 273,
+      "covariance": {
+        "psi_3": {
+          "condition_number": 1.8692002750401344,
+          "effectively_near_diagonal": true,
+          "eigenvalue_floor": 2.4248040475904255e-07,
+          "eigenvalues_after_floor": [
+            0.1874915413752509,
+            0.18949043219555903,
+            0.35045924070631773
+          ],
+          "eigenvalues_before_floor": [
+            0.1874915413752509,
+            0.18949043219555903,
+            0.35045924070631773
+          ],
+          "estimator": "ledoit_wolf_correlation",
+          "max_abs_off_diagonal_correlation": 0.0,
+          "sample_count": 16,
+          "shrinkage": 1.0
+        },
+        "psi_7": {
+          "condition_number": 2.9790133342669365,
+          "effectively_near_diagonal": true,
+          "eigenvalue_floor": 2.101497924630497e-07,
+          "eigenvalues_after_floor": [
+            0.1240882338142925,
+            0.13670064041644583,
+            0.3696605031584107
+          ],
+          "eigenvalues_before_floor": [
+            0.1240882338142925,
+            0.13670064041644583,
+            0.3696605031584107
+          ],
+          "estimator": "ledoit_wolf_correlation",
+          "max_abs_off_diagonal_correlation": 0.0,
+          "sample_count": 16,
+          "shrinkage": 1.0
+        },
+        "sigma_a": {
+          "condition_number": 8.812051033148697,
+          "effectively_near_diagonal": true,
+          "eigenvalue_floor": 8.833666659843967e-08,
+          "eigenvalues_after_floor": [
+            0.017706499179929468,
+            0.09127292622344557,
+            0.156030574391944
+          ],
+          "eigenvalues_before_floor": [
+            0.017706499179929468,
+            0.09127292622344557,
+            0.156030574391944
+          ],
+          "estimator": "ledoit_wolf_correlation",
+          "max_abs_off_diagonal_correlation": 0.0,
+          "sample_count": 16,
+          "shrinkage": 1.0
+        },
+        "sigma_future": {
+          "condition_number": 7.752758302038985,
+          "effectively_near_diagonal": false,
+          "eigenvalue_floor": 3.148739761111441e-07,
+          "eigenvalues_after_floor": [
+            0.07127833096947545,
+            0.32073992518487304,
+            0.552603672179084
+          ],
+          "eigenvalues_before_floor": [
+            0.0712783309694755,
+            0.3207399251848729,
+            0.5526036721790839
+          ],
+          "estimator": "participant_balanced_within_ledoit_wolf_correlation",
+          "max_abs_off_diagonal_correlation": 0.5932454109102433,
+          "sample_count": 16,
+          "shrinkage": 0.0166158587057617
+        }
+      },
+      "development_participants": 16,
+      "fold": 0,
+      "layer1_weights": {
+        "e3g": {
+          "catboost": 0.0,
+          "population_median": 0.9,
+          "wearable_ridge": 0.1
+        },
+        "lh": {
+          "catboost": 0.0,
+          "population_median": 0.9,
+          "wearable_ridge": 0.1
+        },
+        "pdg": {
+          "catboost": 0.0,
+          "population_median": 1.0,
+          "wearable_ridge": 0.0
+        }
+      },
+      "nested_catboost_tree_counts": [
+        {
+          "e3g": 173,
+          "lh": 3,
+          "pdg": 24
+        },
+        {
+          "e3g": 3,
+          "lh": 113,
+          "pdg": 5
+        },
+        {
+          "e3g": 6,
+          "lh": 5,
+          "pdg": 14
+        },
+        {
+          "e3g": 5,
+          "lh": 60,
+          "pdg": 3
+        }
+      ],
+      "runtime_seconds": 43.28127919999679,
+      "test_origins": 301,
+      "test_participants": 4,
+      "train_participants": 12,
+      "validation_participants": 4
+    },
+    {
+      "common_suffix_origins": 274,
+      "covariance": {
+        "psi_3": {
+          "condition_number": 3.283630332079926,
+          "effectively_near_diagonal": true,
+          "eigenvalue_floor": 2.0535112048999494e-07,
+          "eigenvalues_after_floor": [
+            0.10902662109917173,
+            0.14902362032538766,
+            0.3580031200454255
+          ],
+          "eigenvalues_before_floor": [
+            0.10902662109917173,
+            0.14902362032538766,
+            0.3580031200454255
+          ],
+          "estimator": "ledoit_wolf_correlation",
+          "max_abs_off_diagonal_correlation": 0.0,
+          "sample_count": 16,
+          "shrinkage": 1.0
+        },
+        "psi_7": {
+          "condition_number": 2.631387687183645,
+          "effectively_near_diagonal": true,
+          "eigenvalue_floor": 1.9671370408442116e-07,
+          "eigenvalues_after_floor": [
+            0.12453975952923875,
+            0.13788896293397387,
+            0.32771238979005085
+          ],
+          "eigenvalues_before_floor": [
+            0.12453975952923875,
+            0.13788896293397387,
+            0.32771238979005085
+          ],
+          "estimator": "ledoit_wolf_correlation",
+          "max_abs_off_diagonal_correlation": 0.0,
+          "sample_count": 16,
+          "shrinkage": 1.0
+        },
+        "sigma_a": {
+          "condition_number": 4.413448648138868,
+          "effectively_near_diagonal": false,
+          "eigenvalue_floor": 1.1238038450677537e-07,
+          "eigenvalues_after_floor": [
+            0.04084939296220595,
+            0.1160050624117788,
+            0.18028669814634118
+          ],
+          "eigenvalues_before_floor": [
+            0.040849392962205945,
+            0.1160050624117789,
+            0.18028669814634132
+          ],
+          "estimator": "ledoit_wolf_correlation",
+          "max_abs_off_diagonal_correlation": 0.22582610707327183,
+          "sample_count": 16,
+          "shrinkage": 0.6693624866158756
+        },
+        "sigma_future": {
+          "condition_number": 7.6533231235247525,
+          "effectively_near_diagonal": false,
+          "eigenvalue_floor": 3.27095331555497e-07,
+          "eigenvalues_after_floor": [
+            0.07317500145113146,
+            0.34807906254545673,
+            0.5600319306699026
+          ],
+          "eigenvalues_before_floor": [
+            0.07317500145113151,
+            0.34807906254545695,
+            0.5600319306699025
+          ],
+          "estimator": "participant_balanced_within_ledoit_wolf_correlation",
+          "max_abs_off_diagonal_correlation": 0.6065330391988145,
+          "sample_count": 16,
+          "shrinkage": 0.018637248976108158
+        }
+      },
+      "development_participants": 16,
+      "fold": 1,
+      "layer1_weights": {
+        "e3g": {
+          "catboost": 0.5,
+          "population_median": 0.4,
+          "wearable_ridge": 0.1
+        },
+        "lh": {
+          "catboost": 0.0,
+          "population_median": 0.8,
+          "wearable_ridge": 0.2
+        },
+        "pdg": {
+          "catboost": 0.6,
+          "population_median": 0.2,
+          "wearable_ridge": 0.2
+        }
+      },
+      "nested_catboost_tree_counts": [
+        {
+          "e3g": 173,
+          "lh": 3,
+          "pdg": 24
+        },
+        {
+          "e3g": 15,
+          "lh": 9,
+          "pdg": 250
+        },
+        {
+          "e3g": 1,
+          "lh": 1,
+          "pdg": 3
+        },
+        {
+          "e3g": 19,
+          "lh": 62,
+          "pdg": 98
+        }
+      ],
+      "runtime_seconds": 53.9309551999977,
+      "test_origins": 302,
+      "test_participants": 4,
+      "train_participants": 12,
+      "validation_participants": 4
+    },
+    {
+      "common_suffix_origins": 289,
+      "covariance": {
+        "psi_3": {
+          "condition_number": 2.517313750649526,
+          "effectively_near_diagonal": true,
+          "eigenvalue_floor": 2.271560684814236e-07,
+          "eigenvalues_after_floor": [
+            0.14442120561793456,
+            0.17349351303892796,
+            0.3635534867874089
+          ],
+          "eigenvalues_before_floor": [
+            0.14442120561793445,
+            0.17349351303892788,
+            0.3635534867874087
+          ],
+          "estimator": "ledoit_wolf_correlation",
+          "max_abs_off_diagonal_correlation": 0.012119778482798028,
+          "sample_count": 16,
+          "shrinkage": 0.9690876134463485
+        },
+        "psi_7": {
+          "condition_number": 3.047529975023288,
+          "effectively_near_diagonal": false,
+          "eigenvalue_floor": 2.0265205533752293e-07,
+          "eigenvalues_after_floor": [
+            0.11179874110382912,
+            0.15544741022495256,
+            0.34071001468378725
+          ],
+          "eigenvalues_before_floor": [
+            0.11179874110382909,
+            0.15544741022495254,
+            0.3407100146837873
+          ],
+          "estimator": "ledoit_wolf_correlation",
+          "max_abs_off_diagonal_correlation": 0.07463315421975578,
+          "sample_count": 16,
+          "shrinkage": 0.8113754785178574
+        },
+        "sigma_a": {
+          "condition_number": 3.050131293747684,
+          "effectively_near_diagonal": true,
+          "eigenvalue_floor": 1.1186926178456361e-07,
+          "eigenvalues_after_floor": [
+            0.04956155300321166,
+            0.13487698856864877,
+            0.1511692437818304
+          ],
+          "eigenvalues_before_floor": [
+            0.04956155300321166,
+            0.13487698856864877,
+            0.1511692437818304
+          ],
+          "estimator": "ledoit_wolf_correlation",
+          "max_abs_off_diagonal_correlation": 0.0,
+          "sample_count": 16,
+          "shrinkage": 1.0
+        },
+        "sigma_future": {
+          "condition_number": 6.703753081511158,
+          "effectively_near_diagonal": false,
+          "eigenvalue_floor": 3.2591715670806634e-07,
+          "eigenvalues_after_floor": [
+            0.08188431068298915,
+            0.34693495937270363,
+            0.5489322000685062
+          ],
+          "eigenvalues_before_floor": [
+            0.0818843106829893,
+            0.34693495937270363,
+            0.5489322000685062
+          ],
+          "estimator": "participant_balanced_within_ledoit_wolf_correlation",
+          "max_abs_off_diagonal_correlation": 0.5801041152794978,
+          "sample_count": 16,
+          "shrinkage": 0.021848912769898476
+        }
+      },
+      "development_participants": 16,
+      "fold": 2,
+      "layer1_weights": {
+        "e3g": {
+          "catboost": 0.0,
+          "population_median": 0.8,
+          "wearable_ridge": 0.2
+        },
+        "lh": {
+          "catboost": 0.6,
+          "population_median": 0.3,
+          "wearable_ridge": 0.1
+        },
+        "pdg": {
+          "catboost": 0.1,
+          "population_median": 0.7,
+          "wearable_ridge": 0.2
+        }
+      },
+      "nested_catboost_tree_counts": [
+        {
+          "e3g": 10,
+          "lh": 1,
+          "pdg": 37
+        },
+        {
+          "e3g": 15,
+          "lh": 9,
+          "pdg": 250
+        },
+        {
+          "e3g": 1,
+          "lh": 10,
+          "pdg": 1
+        },
+        {
+          "e3g": 10,
+          "lh": 140,
+          "pdg": 57
+        }
+      ],
+      "runtime_seconds": 47.82091209999635,
+      "test_origins": 317,
+      "test_participants": 4,
+      "train_participants": 12,
+      "validation_participants": 4
+    },
+    {
+      "common_suffix_origins": 289,
+      "covariance": {
+        "psi_3": {
+          "condition_number": 1.3903810324896897,
+          "effectively_near_diagonal": true,
+          "eigenvalue_floor": 1.8491540507222578e-07,
+          "eigenvalues_after_floor": [
+            0.1522886713885817,
+            0.1907182636663564,
+            0.21173928016173932
+          ],
+          "eigenvalues_before_floor": [
+            0.1522886713885817,
+            0.1907182636663564,
+            0.21173928016173932
+          ],
+          "estimator": "ledoit_wolf_correlation",
+          "max_abs_off_diagonal_correlation": 0.0,
+          "sample_count": 16,
+          "shrinkage": 1.0
+        },
+        "psi_7": {
+          "condition_number": 1.3745929128482486,
+          "effectively_near_diagonal": true,
+          "eigenvalue_floor": 1.3246472040310778e-07,
+          "eigenvalues_after_floor": [
+            0.10654629532565892,
+            0.14439008343877724,
+            0.14645778244488722
+          ],
+          "eigenvalues_before_floor": [
+            0.10654629532565892,
+            0.14439008343877724,
+            0.14645778244488722
+          ],
+          "estimator": "ledoit_wolf_correlation",
+          "max_abs_off_diagonal_correlation": 0.0,
+          "sample_count": 16,
+          "shrinkage": 1.0
+        },
+        "sigma_a": {
+          "condition_number": 5.038309268383795,
+          "effectively_near_diagonal": false,
+          "eigenvalue_floor": 1.3063793202029978e-07,
+          "eigenvalues_after_floor": [
+            0.04035384400462141,
+            0.1482448057928802,
+            0.20331514626339783
+          ],
+          "eigenvalues_before_floor": [
+            0.0403538440046214,
+            0.14824480579288019,
+            0.2033151462633978
+          ],
+          "estimator": "ledoit_wolf_correlation",
+          "max_abs_off_diagonal_correlation": 0.13355260383811646,
+          "sample_count": 16,
+          "shrinkage": 0.7698958139334084
+        },
+        "sigma_future": {
+          "condition_number": 7.297777162436126,
+          "effectively_near_diagonal": false,
+          "eigenvalue_floor": 3.3275708293383257e-07,
+          "eigenvalues_after_floor": [
+            0.07836243723009476,
+            0.3480372067607828,
+            0.5718716048106203
+          ],
+          "eigenvalues_before_floor": [
+            0.0783624372300948,
+            0.3480372067607828,
+            0.5718716048106203
+          ],
+          "estimator": "participant_balanced_within_ledoit_wolf_correlation",
+          "max_abs_off_diagonal_correlation": 0.5915745620578856,
+          "sample_count": 16,
+          "shrinkage": 0.02109761876217253
+        }
+      },
+      "development_participants": 16,
+      "fold": 3,
+      "layer1_weights": {
+        "e3g": {
+          "catboost": 0.0,
+          "population_median": 0.9,
+          "wearable_ridge": 0.1
+        },
+        "lh": {
+          "catboost": 0.0,
+          "population_median": 0.9,
+          "wearable_ridge": 0.1
+        },
+        "pdg": {
+          "catboost": 0.2,
+          "population_median": 0.8,
+          "wearable_ridge": 0.0
+        }
+      },
+      "nested_catboost_tree_counts": [
+        {
+          "e3g": 2,
+          "lh": 2,
+          "pdg": 21
+        },
+        {
+          "e3g": 8,
+          "lh": 13,
+          "pdg": 120
+        },
+        {
+          "e3g": 1,
+          "lh": 10,
+          "pdg": 1
+        },
+        {
+          "e3g": 6,
+          "lh": 92,
+          "pdg": 117
+        }
+      ],
+      "runtime_seconds": 41.79210649999732,
+      "test_origins": 317,
+      "test_participants": 4,
+      "train_participants": 12,
+      "validation_participants": 4
+    },
+    {
+      "common_suffix_origins": 244,
+      "covariance": {
+        "psi_3": {
+          "condition_number": 2.781201333993646,
+          "effectively_near_diagonal": true,
+          "eigenvalue_floor": 2.2253767661159672e-07,
+          "eigenvalues_after_floor": [
+            0.13044273613917448,
+            0.17438278193556253,
+            0.36278751176005325
+          ],
+          "eigenvalues_before_floor": [
+            0.13044273613917448,
+            0.17438278193556253,
+            0.36278751176005325
+          ],
+          "estimator": "ledoit_wolf_correlation",
+          "max_abs_off_diagonal_correlation": 0.0,
+          "sample_count": 16,
+          "shrinkage": 1.0
+        },
+        "psi_7": {
+          "condition_number": 4.216468533196523,
+          "effectively_near_diagonal": false,
+          "eigenvalue_floor": 1.8146618314732957e-07,
+          "eigenvalues_after_floor": [
+            0.08073169804852014,
+            0.12326418694036025,
+            0.34040266445310835
+          ],
+          "eigenvalues_before_floor": [
+            0.08073169804852014,
+            0.12326418694036033,
+            0.3404026644531083
+          ],
+          "estimator": "ledoit_wolf_correlation",
+          "max_abs_off_diagonal_correlation": 0.14730377499718542,
+          "sample_count": 16,
+          "shrinkage": 0.6989694740804501
+        },
+        "sigma_a": {
+          "condition_number": 6.366101550316947,
+          "effectively_near_diagonal": false,
+          "eigenvalue_floor": 1.2839429330683333e-07,
+          "eigenvalues_after_floor": [
+            0.03375680115634317,
+            0.1365268545890198,
+            0.21489922417513727
+          ],
+          "eigenvalues_before_floor": [
+            0.033756801156343164,
+            0.13652685458901967,
+            0.21489922417513727
+          ],
+          "estimator": "ledoit_wolf_correlation",
+          "max_abs_off_diagonal_correlation": 0.15885245680359594,
+          "sample_count": 16,
+          "shrinkage": 0.7661335772666567
+        },
+        "sigma_future": {
+          "condition_number": 7.459502623230938,
+          "effectively_near_diagonal": false,
+          "eigenvalue_floor": 3.3604039441358653e-07,
+          "eigenvalues_after_floor": [
+            0.07796106570422762,
+            0.34860934340596733,
+            0.5815507741305649
+          ],
+          "eigenvalues_before_floor": [
+            0.07796106570422753,
+            0.34860934340596733,
+            0.581550774130565
+          ],
+          "estimator": "participant_balanced_within_ledoit_wolf_correlation",
+          "max_abs_off_diagonal_correlation": 0.5746089586278753,
+          "sample_count": 16,
+          "shrinkage": 0.01973695245487678
+        }
+      },
+      "development_participants": 16,
+      "fold": 4,
+      "layer1_weights": {
+        "e3g": {
+          "catboost": 0.0,
+          "population_median": 1.0,
+          "wearable_ridge": 0.0
+        },
+        "lh": {
+          "catboost": 1.0,
+          "population_median": 0.0,
+          "wearable_ridge": 0.0
+        },
+        "pdg": {
+          "catboost": 0.0,
+          "population_median": 0.9,
+          "wearable_ridge": 0.1
+        }
+      },
+      "nested_catboost_tree_counts": [
+        {
+          "e3g": 5,
+          "lh": 60,
+          "pdg": 3
+        },
+        {
+          "e3g": 144,
+          "lh": 34,
+          "pdg": 169
+        },
+        {
+          "e3g": 1,
+          "lh": 2,
+          "pdg": 186
+        },
+        {
+          "e3g": 6,
+          "lh": 92,
+          "pdg": 117
+        }
+      ],
+      "runtime_seconds": 63.28887780000514,
+      "test_origins": 272,
+      "test_participants": 4,
+      "train_participants": 12,
+      "validation_participants": 4
+    }
+  ],
+  "git": {
+    "branch": "main",
+    "commit": "67006276d25a1198a9ebf3cfa271c1d2372ebf1b",
+    "training_code_commit": "67006276d25a1198a9ebf3cfa271c1d2372ebf1b",
+    "working_tree_clean": false
+  },
+  "h3p_config_hash": "d02eb3f721cdb8f820f305fdec4108f6f9cbec5dc633e0a82a6a2a35ea0ab23e",
+  "h3p_model_spec_hash": "3b77546e8dc6c12f102e7a5c3c9cb884bd609a778048e9bc796ac4832815083a",
+  "implementation_spec_sha256": "575767e4b9369791c65ad08889ceb116952456c9a26f335e31b651d827941856",
+  "implementation_spec_sha256_at_training": "575767e4b9369791c65ad08889ceb116952456c9a26f335e31b651d827941856",
+  "implementation_spec_sha256_current": "453367240114fafc4011abc7c54c698870ef3667b95bb261bb24183ab56dcb2f",
+  "input_schema_hash": "30b91bb7085bfc2e2efb29824f48f18bc2171b8157a34f4ee080172dad520a82",
+  "legacy_custom_status": "historical_protocol_compromised_comparator",
+  "outer_test_used_for_h3p_model_selection": false,
+  "outputs": {
+    "RESULTS.md": "b749c4074e387c0b4b389fcf0be235da1045235de841981413f10802501ed6cf",
+    "ablations/development_only.json": "1143bd5041f4026c447bed2ec9cf1bbe0847ffd4b2534b0f725f5713d29b2d9e",
+    "cold_start/fold_metrics.csv": "3e7ad2a09c5993fd10d0188acdfab21f23e0827824391b84656c958b439a5a0d",
+    "cold_start/leaderboard.csv": "3c005ae3516df33378a3f31b7730f3635d8923c843eb40d1e89f15f6f86bb0e0",
+    "few_shot/leaderboard_by_budget.csv": "025069695462a22b664f0266b7c51f5abccf807ef9c4a9af54a3d623d3dd5e2d",
+    "figures/cold_start_leaderboard.svg": "73fcd5f6c32e18e99acaf37e2c6006296ee6d9028f3eeff790f0dc4324a88a1c",
+    "figures/measurement_budget_curve.svg": "8afdfa2f0c6fc38ac59f9fdf44a00eb3c200370aeb5fbd69c49d57801a5e6d1b",
+    "figures/uncertainty_summary.svg": "0e560a73257603de92261eb5c6069b6a29f408a8c355cbfff4ab19c6ee7328bb",
+    "metrics.json": "a7b77568175aec74ea4777113a822d0fa0e75fc38e1f2feb235d1c5768de377e"
+  },
+  "post_hoc_existing_protocol": true,
+  "reference_model": "population_median",
+  "runtime": {
+    "development_oof_seconds": 240.18338400000357,
+    "evaluation_seconds": 5.733430000000226,
+    "layer2_fit_seconds": 5.908995300000242,
+    "model_seconds": 250.32318680000026,
+    "peak_rss_mb": 340.06640625,
+    "report_seconds": 2.125753699998313
+  },
+  "schema_version": "1.1.0",
+  "task_id": "hormonbench_mcphases_interval2_nextday_v1",
+  "task_spec_hash": "1783561d82980e55ff0a3fa3cb026a2598afcc4f6eec1a6c456d117e70d6c6e5",
+  "task_version": "1.0.0",
+  "training_code_commit": "67006276d25a1198a9ebf3cfa271c1d2372ebf1b",
+  "untouched_test_confirmation": false
+}

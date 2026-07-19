@@ -1,0 +1,121 @@
+{
+  "aggregate_artifacts": {
+    "figure": "figures/log1p_mae.svg",
+    "leaderboard": "leaderboard.csv",
+    "metrics": "metrics.json"
+  },
+  "artifact_sha256": {
+    "figures/log1p_mae.svg": "17e9f9972e487e76ec37c261808874adcf516b5673bd09abd9b90e61c70775c1",
+    "leaderboard.csv": "bfb8da9cc431cfddd4822df2fb169bb486cc135741641d784b41c0e2859217c1",
+    "metrics.json": "c7486ed60f129139f83e917823e8463d5c2c8b6159c0af763027ef6f3ac3f20a"
+  },
+  "config_hash": "8561c568f83774b0d702bbf6e360379e6bea3e9eaa6d31125f2052c40115e67c",
+  "generated_at_utc": "2026-07-18T23:49:07.358629+00:00",
+  "models": {
+    "catboost": {
+      "backend": "catboost",
+      "best_iteration": {
+        "e3g": 0,
+        "lh": 0,
+        "pdg": 7
+      },
+      "fit_seconds": 7.995064699996874,
+      "metadata_available": true,
+      "model_name": "catboost",
+      "model_version": "0.1.0",
+      "parameters": {
+        "allow_writing_files": false,
+        "depth": 5,
+        "eval_metric": "MAE",
+        "iterations": 180,
+        "l2_leaf_reg": 5.0,
+        "learning_rate": 0.04,
+        "loss_function": "RMSE",
+        "random_seed": 20260719,
+        "task_type": "CPU",
+        "thread_count": 4,
+        "verbose": false
+      },
+      "peak_rss_mb": 279.7265625,
+      "predict_seconds": 0.32945399999880465,
+      "prediction_rows": 903,
+      "preprocessor": {
+        "categorical_feature_count": 0,
+        "feature_count": 688,
+        "numeric_feature_count": 688,
+        "preprocessing": "train-only median imputation and ordinal unknown=-1 encoding"
+      },
+      "quick": true,
+      "requested_model": "catboost",
+      "seed": 20260719,
+      "target_space": "log1p",
+      "test_rows": 301,
+      "train_rows": 906,
+      "validation_rows": 302
+    },
+    "causal_calendar": {
+      "fit_seconds": 0.008033099999011029,
+      "metadata_available": true,
+      "model_name": "causal_calendar",
+      "model_version": "0.1.0",
+      "peak_rss_mb": 179.62890625,
+      "predict_seconds": 0.016964399997959845,
+      "prediction_rows": 903,
+      "quick": true,
+      "requested_model": "causal_calendar",
+      "seed": null,
+      "target_space": "log1p",
+      "test_rows": 301,
+      "train_rows": 906,
+      "validation_rows": 302
+    },
+    "population_median": {
+      "fit_seconds": 0.0011008000001311302,
+      "metadata_available": true,
+      "model_name": "population_median",
+      "model_version": "0.1.0",
+      "peak_rss_mb": 178.25390625,
+      "predict_seconds": 0.01611880000200472,
+      "prediction_rows": 903,
+      "quick": true,
+      "requested_model": "population_median",
+      "seed": null,
+      "target_space": "log1p",
+      "test_rows": 301,
+      "train_rows": 906,
+      "validation_rows": 302
+    }
+  },
+  "prediction_space": "log1p",
+  "primary_metric": "participant_macro_log1p_mae",
+  "privacy": "Aggregate metrics only; no participant IDs, truth rows, or prediction rows.",
+  "reference_model": "causal_calendar",
+  "runtime": {
+    "evaluate_seconds": 0.5396542999988014,
+    "model_fit_predict_seconds": 8.366735799994785,
+    "prepare": {
+      "prepare_peak_rss_mb": 261.1875,
+      "prepare_seconds": 44.55199430000357
+    },
+    "report_seconds_before_manifest_write": 0.07470399999874644,
+    "total_measured_stage_seconds_before_manifest_write": 53.533088399995904
+  },
+  "split_counts": {
+    "test": {
+      "eligible_origins": 301,
+      "participants": 4
+    },
+    "train": {
+      "eligible_origins": 906,
+      "participants": 12
+    },
+    "validation": {
+      "eligible_origins": 302,
+      "participants": 4
+    }
+  },
+  "split_seed": 20260719,
+  "task_id": "hormonbench_mcphases_interval2_nextday_v0",
+  "task_version": "0.1.0",
+  "track": "primary_interval2_nextday"
+}

@@ -1,0 +1,84 @@
+model:
+  id: diana_h3p
+  version: 1.0.0
+  description: Budget-Aware Hierarchical Tri-Hormone Personalizer
+  role: custom_reference
+
+benchmark_config: configs/hormonbench_v1.yaml
+
+expected_benchmark:
+  task_id: hormonbench_mcphases_interval2_nextday_v1
+  task_version: 1.0.0
+  eligible_participants: 20
+  eligible_origins: 1509
+  common_suffix_origins: 1369
+  task_spec_hash: 1783561d82980e55ff0a3fa3cb026a2598afcc4f6eec1a6c456d117e70d6c6e5
+  fold_hash: f4c350c291c060638324c96b694f3af0a811180ba2f182883d5f4746ca37dbf1
+  input_schema_hash: 30b91bb7085bfc2e2efb29824f48f18bc2171b8157a34f4ee080172dad520a82
+
+paths:
+  baseline_prediction_dir: artifacts/private/v1/predictions/canonical_v1_full
+  baseline_prediction_manifest: artifacts/private/v1/predictions/canonical_v1_full/manifest.json
+  preserved_baseline_dir: artifacts/private/v1/predictions/canonical_v1
+  preserved_baseline_manifest: artifacts/private/v1/predictions/canonical_v1/manifest.json
+  private_run_root: artifacts/private/v1/diana_h3p/canonical_h3p_v1
+  prediction_dir: artifacts/private/v1/diana_h3p/canonical_h3p_v1/predictions
+  prediction_manifest: artifacts/private/v1/diana_h3p/canonical_h3p_v1/predictions/manifest.json
+  oof_dir: artifacts/private/v1/diana_h3p/canonical_h3p_v1/oof
+  checkpoint_dir: artifacts/private/v1/diana_h3p/canonical_h3p_v1/checkpoints
+  participant_metrics_dir: artifacts/private/v1/diana_h3p/canonical_h3p_v1/participant_metrics
+  audit_dir: artifacts/private/v1/diana_h3p/canonical_h3p_v1/manifests
+  results_dir: results/v1/diana_h3p
+  implementation_spec: reports/phase1/DIANA_H3P_IMPLEMENTATION_SPEC.md
+
+layer1:
+  experts: [population_median, wearable_ridge, catboost]
+  simplex_step: 0.10
+  objective: participant_macro_log1p_mae
+  tie_tolerance: 1.0e-12
+  tie_break: larger_population_median_then_larger_ridge_then_lexicographic
+  grouped_oof_blocks: existing_development_groups
+  catboost_nested_stopping: cyclic_next_available_group
+  catboost_inner_train_participants: 8
+  catboost_inner_validation_participants: 4
+  catboost_final_oof_fit_participants: 12
+
+layer2:
+  budgets: [0, 3, 7]
+  covariance_estimator: continuous_ledoit_wolf_correlation
+  absolute_eigenvalue_floor: 1.0e-10
+  relative_eigenvalue_floor: 1.0e-6
+  near_diagonal_threshold: 0.05
+  sigma_a_source: participant_mean_common_suffix_oof_residual
+  psi_source: chronological_calibration_mean_minus_common_suffix_proxy
+  sigma_future_source: participant_balanced_within_common_suffix_residual
+  posterior_solver: cholesky_conditioning_no_inverse
+
+uncertainty:
+  interval_level: 0.80
+  multiplier_quantile: 0.80
+  calibration: leave_one_participant_layer2_participant_balanced
+  label: participant-block calibrated research prediction interval
+
+backend:
+  candidates: [numpy, torch_cpu, torch_cuda]
+  canonical: numpy
+  minimum_speedup_fraction: 0.10
+  parity_rtol: 1.0e-8
+  parity_atol: 1.0e-10
+  profile_warmups: 2
+  profile_repetitions: 7
+  dtype: float64
+
+runtime:
+  run_id: canonical_h3p_v1
+  seed: 20260719
+  sequential_outer_folds: true
+  allow_test_tuning: false
+  allow_runtime_install: false
+  training_code_commit: from_git_head
+
+claims:
+  post_hoc_existing_protocol: true
+  untouched_test_confirmation: false
+  clinical_validation: false
