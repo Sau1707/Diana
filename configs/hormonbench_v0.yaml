@@ -1,0 +1,65 @@
+task:
+  id: hormonbench_mcphases_interval2_nextday_v0
+  version: 0.1.0
+  track: primary_interval2_nextday
+  interval: 2024
+  history_days: 14
+  forecast_days: 1
+  target_space: log1p
+  targets: [lh, e3g, pdg]
+
+paths:
+  data_root: dataset/mcphases-a-dataset-of-physiological-hormonal-and-self-reported-events-and-symptoms-for-menstrual-health-tracking-with-wearables-1.0.0
+  prepared_dir: artifacts/private/prepared/hormonbench_mcphases_interval2_nextday_v0_0.1.0
+  split_dir: artifacts/private/splits
+  prediction_dir: artifacts/private/predictions
+  checkpoint_dir: artifacts/private/checkpoints
+  results_dir: results/v0
+
+split:
+  seed: 20260719
+  train_participants: 12
+  validation_participants: 4
+  test_participants: 4
+  balance_candidate_permutations: 20000
+  balance_quantities: [eligible_origin_count, approved_modality_day_coverage]
+
+features:
+  modalities:
+    - active_minutes
+    - computed_temperature_end_day
+    - hrv_daily_aggregate
+    - respiratory_rate_summary
+    - sleep_score
+    - past_self_reports
+    - causal_calendar
+  summary_statistics: [last, mean, std, min, max, slope, coverage, time_since, missing_current]
+  selected_lags: [0, 1, 3, 6, 13]
+  menses_source: flow_volume
+  menses_onset_rule: first positive report after the most recent known nonpositive report
+  prohibit_hormone_history: true
+  include_participant_id_as_feature: false
+  include_mira_phase: false
+
+models:
+  seed: 20260719
+  causal_calendar:
+    ridge_alpha: 1.0
+    harmonic_period_days: 28.0
+    polynomial_degree: 2
+  catboost:
+    iterations: 300
+    quick_iterations: 180
+    depth: 5
+    learning_rate: 0.04
+    l2_leaf_reg: 5.0
+    early_stopping_rounds: 40
+    loss_function: RMSE
+    eval_metric: MAE
+    thread_count: 4
+
+evaluation:
+  primary_metric: participant_macro_log1p_mae
+  robust_scale: iqr
+  reference_model: causal_calendar
+  prediction_space: log1p

@@ -1,0 +1,13 @@
+{
+  "active_reference": false,
+  "cold_start_overall_normalized_score": 0.642639,
+  "few_shot_overall_normalized_score": {
+    "0": 0.640382,
+    "3": 0.611701,
+    "7": 0.605710
+  },
+  "label": "historical_protocol_compromised_comparator",
+  "outer_test_confirmation": false,
+  "reason": "fold-0 validation participants influenced a global covariance-mode choice before serving as outer test in another fold",
+  "validation_superiority_gate_passed": false
+}

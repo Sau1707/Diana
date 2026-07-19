@@ -1,0 +1,10 @@
+dataset/
+artifacts/private/
+reports/phase0/PHASE0_AUDIT.md
+reports/phase0/target_coverage.csv
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+LICENSE.zip
+*.zip

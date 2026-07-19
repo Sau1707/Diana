@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "diana-hormonbench"
+version = "0.3.0"
+description = "Participant-disjoint next-day hormone forecasting benchmark for mcPHASES"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+dependencies = [
+  "numpy==2.4.4",
+  "pandas==3.0.3",
+  "scipy==1.17.1",
+  "scikit-learn==1.9.0",
+  "catboost==1.2.10",
+  "PyYAML==6.0.3",
+  "psutil==7.2.2",
+  "matplotlib==3.11.1",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8,<10"]
+acceleration = ["torch>=2.5,<2.6"]
+
+[tool.setuptools.packages.find]
+include = ["benchmark*", "model*"]
+
+[tool.pytest.ini_options]
+testpaths = ["benchmark/tests", "model/tests"]
+addopts = "-ra"
