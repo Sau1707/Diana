@@ -1,6 +1,6 @@
-import { ArrowRight, CircleUserRound, FlaskConical, Search, ShieldCheck } from "lucide-react";
+import { ArrowRight, ChevronDown, CircleUserRound, FlaskConical, Search, ShieldCheck } from "lucide-react";
 import { useDeferredValue, useId, useState, type ReactNode } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { useStore } from "../app/store";
 import { categories, faqs } from "../data/catalog";
@@ -12,10 +12,17 @@ export function BrandMark({ className }: { className?: string }) {
   return <img className={className} src="/assets/diana-logo-transparent.svg" alt="" aria-hidden="true" />;
 }
 
-export function Logo({ compact = false }: { compact?: boolean }) {
+export function Logo({ compact = false, linked = true }: { compact?: boolean; linked?: boolean }) {
+  const className = cn("inline-flex min-h-11 items-center rounded-lg", linked && "group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black");
+  const mark = <BrandMark className={cn("h-auto", linked && "transition-transform group-hover:translate-x-0.5", compact ? "w-[88px]" : "w-[112px]")} />;
+
+  if (!linked) {
+    return <span className={className} role="img" aria-label="DIANA">{mark}</span>;
+  }
+
   return (
-    <Link to="/" className="group inline-flex min-h-11 items-center rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black" aria-label="DIANA home">
-      <BrandMark className={cn("h-auto transition-transform group-hover:translate-x-0.5", compact ? "w-[88px]" : "w-[112px]")} />
+    <Link to="/" className={className} aria-label="DIANA home">
+      {mark}
     </Link>
   );
 }
@@ -93,11 +100,10 @@ export function StandardHeader({ participant = false }: { participant?: boolean 
         <Logo compact />
         <div className="hidden flex-1 justify-center sm:flex"><QuestionBar /></div>
         <nav className="ml-auto flex items-center gap-1 sm:gap-3" aria-label="Primary navigation">
+          <Link to="/tree" className="grid min-h-11 place-items-center rounded-full px-3 text-sm font-semibold hover:bg-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black">Tree</Link>
           <Link to="/projects" className="grid min-h-11 place-items-center rounded-full px-3 text-sm font-semibold hover:bg-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black">Projects</Link>
           {participant && state.participantAuthenticated && (
-            <Link to="/participant/dashboard" className="grid size-11 place-items-center rounded-full border border-black hover:bg-[var(--purple-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black" aria-label="Participant profile and dashboard">
-              <CircleUserRound className="size-5" aria-hidden="true" />
-            </Link>
+            <ParticipantUserMenu />
           )}
         </nav>
       </div>
@@ -106,12 +112,73 @@ export function StandardHeader({ participant = false }: { participant?: boolean 
   );
 }
 
-export function AuthShell({ title, step, children }: { title: string; step: number; children: ReactNode }) {
+function ParticipantUserMenu() {
+  const menuId = useId();
+  const navigate = useNavigate();
+  const { authenticatedUsername, signOut } = useStore();
+  const [open, setOpen] = useState(false);
+  const [logoutError, setLogoutError] = useState("");
+
+  async function logout(): Promise<void> {
+    const authError = await signOut();
+    if (authError !== null) {
+      setLogoutError(authError);
+      setOpen(true);
+      return;
+    }
+
+    setLogoutError("");
+    setOpen(false);
+    navigate("/participant/login", { replace: true });
+  }
+
+  return (
+    <div
+      className="relative"
+      onBlur={(event) => {
+        if (!(event.relatedTarget instanceof Node) || !event.currentTarget.contains(event.relatedTarget)) {
+          setOpen(false);
+        }
+      }}
+    >
+      <button
+        type="button"
+        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-black bg-white px-3 text-sm font-semibold hover:bg-[var(--purple-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
+        aria-label={`${authenticatedUsername ?? "Participant"} account menu`}
+        aria-controls={menuId}
+        aria-expanded={open}
+        aria-haspopup="true"
+        onClick={() => setOpen((current) => !current)}
+      >
+        <CircleUserRound className="size-5" aria-hidden="true" />
+        <span className="hidden max-w-32 truncate sm:inline">{authenticatedUsername ?? "Participant"}</span>
+        <ChevronDown className={cn("size-4 transition-transform", open && "rotate-180")} aria-hidden="true" />
+      </button>
+      {open && (
+        <div id={menuId} className="absolute right-0 top-14 z-50 w-72 max-w-[calc(100vw-2rem)] rounded-3xl border border-black bg-white p-3 shadow-xl">
+          <div className="rounded-2xl bg-[var(--purple-soft)] px-4 py-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">Signed in as</p>
+            <p className="mt-1 truncate font-semibold">{authenticatedUsername ?? "Participant"}</p>
+          </div>
+          <div className="mt-2 grid gap-1">
+            <Link to="/participant/dashboard" className="rounded-2xl px-4 py-3 text-sm font-semibold hover:bg-[var(--neutral)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black" onClick={() => setOpen(false)}>Dashboard</Link>
+            <Link to="/participant/contribution-choice" className="rounded-2xl px-4 py-3 text-sm font-semibold hover:bg-[var(--neutral)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black" onClick={() => setOpen(false)}>Donate more data</Link>
+            <Link to="/participant/data-types" className="rounded-2xl px-4 py-3 text-sm font-semibold hover:bg-[var(--neutral)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black" onClick={() => setOpen(false)}>Data categories</Link>
+            <button type="button" className="rounded-2xl px-4 py-3 text-left text-sm font-semibold text-[var(--error)] hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black" onClick={() => void logout()}>Sign out</button>
+          </div>
+          {logoutError !== "" && <p className="mt-3 rounded-2xl bg-red-50 p-3 text-xs font-semibold text-[var(--error)]" role="alert">{logoutError}</p>}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function AuthShell({ title, step, children, logoLinked = true }: { title: string; step: number; children: ReactNode; logoLinked?: boolean }) {
   const longTitle = title.length > 20;
 
   return (
     <main className="min-h-[calc(100dvh-33px)] bg-[var(--warm-white)] px-5 py-6 sm:px-10">
-      <Logo />
+      <Logo linked={logoLinked} />
       <div className="mx-auto flex min-h-[75dvh] max-w-4xl flex-col justify-center py-12">
         <h1 className={cn("mb-10 text-center font-bold", longTitle ? "text-3xl tracking-[-0.04em] sm:text-5xl" : "text-4xl tracking-[0.16em] sm:text-5xl")}>{title}</h1>
         {children}

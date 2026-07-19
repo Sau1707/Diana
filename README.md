@@ -4,6 +4,70 @@ Diana is a Hack-Nation research-infrastructure project for reproducible evaluati
 
 Hormonbench is not a diagnostic product, clinical decision system, serum-hormone model, or verified ovulation predictor. It does not establish clinical validity or causal physiology.
 
+```text
++------------------------+
+| Licensed mcPHASES data |
++-----------+------------+
+            |
+            v
++------------------------+
+| Hormonbench v1 adapter |
+| t-13...t -> t+1 task   |
++-----------+------------+
+            |
+            v
++------------------------------+
+| Private prepared bundle      |
+| rows, truth, folds, IDs      |
+| artifacts/private/v1/...     |
++-------------+----------------+
+              |
+      +-------+--------+
+      |                |
+      v                v
++----------------+  +----------------------+
+| Feature-only   |  | Private evaluator    |
+| model views    |  | truth/calibration    |
++-------+--------+  +-----------+----------+
+        |                       ^
+        v                       |
++------------------------+      |
+| Classical baselines    |      |
+| - population_median    |      |
+| - wearable_ridge       |      |
+| - catboost             |      |
++-----------+------------+      |
+            |                   |
+            v                   |
++------------------------+      |
+| Diana-H3P Layer 1      |      |
+| stacked wearable prior |      |
++-----------+------------+      |
+            |                   |
+            v                   |
++-----------------------------+ |
+| Diana-H3P Layer 2           | |
+| personalization K=0/3/7     | |
+| research intervals          | |
++-------------+---------------+ |
+              |                 |
+              v                 |
++-----------------------------+ |
+| Prediction CSVs             | |
+| manifest + SHA-256 hashes   | |
++-------------+---------------+ |
+              |                 |
+              +-----------------+
+              |
+              v
++-----------------------------+
+| Aggregate public results    |
+| privacy/release validation  |
++-----------------------------+
+```
+
+The benchmark owns the task, schemas, folds, private-truth scoring, and privacy checks. The models only consume approved feature/calibration views and emit prediction files in the required schema.
+
 ## Hormonbench-mcPHASES v1
 
 Task `hormonbench_mcphases_interval2_nextday_v1` uses exactly 14 calendar days (`t-13` through `t`) of approved Interval-2 wearable summaries to predict genuinely observed urinary LH, E3G, and PdG readings at `t+1` in log1p space.
@@ -165,6 +229,7 @@ The final image contains the compiled frontend and starts only FastAPI.
 Public:
 
 - `/`
+- `/tree`
 - `/projects`
 - `/projects/:projectId`
 

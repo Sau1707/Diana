@@ -41,7 +41,7 @@ export function ScientistLoginPage() {
   }
 
   return (
-    <AuthShell title="LOG IN" step={1}>
+    <AuthShell title="LOG IN" step={1} logoLinked={false}>
       <form onSubmit={submit} className="mx-auto grid w-full max-w-2xl gap-5">
         <div><label className="mb-2 block font-semibold" htmlFor="scientist-username">Username</label><input id="scientist-username" name="username" required autoComplete="username" placeholder="Enter your username" /></div>
         <div><label className="mb-2 block font-semibold" htmlFor="scientist-password">Password</label><input id="scientist-password" name="password" type="password" required minLength={1} autoComplete="current-password" /></div>

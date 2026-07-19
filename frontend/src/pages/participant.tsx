@@ -1,4 +1,4 @@
-import { ArrowRight, FileText, ShieldCheck } from "lucide-react";
+import { ArrowRight, CheckCircle2, ExternalLink, FileText, ShieldCheck } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 
@@ -11,6 +11,16 @@ import { categories, categoryById } from "../data/catalog";
 import { matchingCategories } from "../lib/matching";
 import type { ConsentRecord, DataCategoryId } from "../lib/types";
 import { cn } from "../lib/utils";
+
+const docusealUrl = "https://www.docuseal.com/";
+
+const signingSteps = [
+  { id: "redirecting", title: "Redirecting to DocuSeal", text: "DIANA prepares a consent packet with only prototype consent metadata." },
+  { id: "signing", title: "Review and sign", text: "The participant reviews the document in a secure DocuSeal-style signing layer." },
+  { id: "returned", title: "Signed document returned", text: "DIANA receives the simulated signed envelope and can record permission." },
+] as const;
+
+type SigningStep = (typeof signingSteps)[number]["id"];
 
 function isCategoryId(value: string): value is DataCategoryId {
   return categories.some((category) => category.id === value);
@@ -57,7 +67,7 @@ export function ParticipantLoginPage() {
   }
 
   return (
-    <AuthShell title="LOG IN" step={1}>
+    <AuthShell title="LOG IN" step={1} logoLinked={false}>
       <form onSubmit={submit} className="mx-auto grid w-full max-w-2xl gap-5">
         <div><label className="mb-2 block font-semibold" htmlFor="participant-username">Username</label><input id="participant-username" name="username" autoComplete="username" required placeholder="Enter your username" /></div>
         <div><label className="mb-2 block font-semibold" htmlFor="participant-password">Password</label><input id="participant-password" name="password" type="password" minLength={1} autoComplete="current-password" required /></div>
@@ -186,6 +196,8 @@ export function ConsentPage() {
   const { allProjects, state, recordConsent } = useStore();
   const [error, setError] = useState("");
   const [complete, setComplete] = useState(false);
+  const [pendingConsent, setPendingConsent] = useState<Omit<ConsentRecord, "id" | "status"> | null>(null);
+  const [signingStep, setSigningStep] = useState<SigningStep>("redirecting");
   const projectId = searchParams.get("project");
   const project = projectId === null ? undefined : allProjects.find((item) => item.id === projectId);
   const requestedIds = dataType === "project-request"
@@ -194,6 +206,20 @@ export function ConsentPage() {
   const requestedCategories = requestedIds.map(categoryById).filter((category) => category !== undefined);
   const today = new Date().toISOString().slice(0, 10);
   const supportedCount = allProjects.filter((item) => matchingCategories(item, state.consents, allProjects).length > 0).length;
+  const signingStepIndex = signingSteps.findIndex((item) => item.id === signingStep);
+  const signingReady = signingStep === "returned";
+
+  useEffect(() => {
+    if (pendingConsent === null) return;
+
+    const reviewTimer = window.setTimeout(() => setSigningStep("signing"), 900);
+    const returnTimer = window.setTimeout(() => setSigningStep("returned"), 1800);
+
+    return () => {
+      window.clearTimeout(reviewTimer);
+      window.clearTimeout(returnTimer);
+    };
+  }, [pendingConsent]);
 
   if (requestedCategories.length === 0) {
     return <main className="grid min-h-dvh place-items-center"><Link to="/participant/data-types">Choose a valid data category.</Link></main>;
@@ -226,7 +252,7 @@ export function ConsentPage() {
       return;
     }
 
-    recordConsent({
+    setPendingConsent({
       categoryIds: requestedIds,
       projectId: project?.id ?? selectedProject?.id ?? null,
       scope: project !== undefined || generalScope === "project" ? "project" : "approved-projects",
@@ -240,6 +266,15 @@ export function ConsentPage() {
       },
     });
     setError("");
+    setComplete(false);
+    setSigningStep("redirecting");
+  }
+
+  function finishDocusealSigning(): void {
+    if (pendingConsent === null || !signingReady) return;
+
+    recordConsent(pendingConsent);
+    setPendingConsent(null);
     setComplete(true);
   }
 
@@ -269,6 +304,42 @@ export function ConsentPage() {
         {error !== "" && <p className="mt-5 rounded-2xl bg-red-50 p-4 text-sm font-semibold text-[var(--error)]" role="alert">{error}</p>}
         <div className="mt-8 flex flex-wrap-reverse items-center justify-between gap-4"><Button variant="outline" onClick={() => navigate(-1)}>Go back</Button><Button type="submit" size="large">Sign and continue <ArrowRight className="size-5" aria-hidden="true" /></Button></div>
       </form>
+
+      <Dialog open={pendingConsent !== null} onOpenChange={(open) => { if (!open) setPendingConsent(null); }}>
+        <DialogContent hideClose className="w-[min(920px,calc(100%-2rem))]">
+          <DialogHeader className="pr-0"><DialogTitle>Secure document signing</DialogTitle><DialogDescription>DIANA simulates redirecting the consent packet to DocuSeal, then returning the signed envelope to this prototype.</DialogDescription></DialogHeader>
+          <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+            <section className="rounded-[30px] border border-black bg-black p-3 text-white">
+              <div className="flex items-center justify-between gap-3 rounded-t-[22px] bg-white/10 px-4 py-3 text-xs font-semibold"><span>Secure signing window</span><span className="rounded-full bg-white px-3 py-1 text-black">docuseal.com</span></div>
+              <div className="rounded-b-[22px] bg-white p-6 text-black">
+                <div className="flex items-center justify-between gap-4"><strong className="text-3xl tracking-[-0.05em]">DocuSeal</strong><ShieldCheck className="size-7" aria-hidden="true" /></div>
+                <div className="mt-7 rounded-3xl border border-black bg-[var(--green-soft)] p-5">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">DIANA consent packet</p>
+                  <h3 className="mt-3 text-2xl font-semibold tracking-[-0.04em]">{requestedCategories.map((category) => category.shortTitle).join(", ")}</h3>
+                  <dl className="mt-5 grid gap-3 text-sm">
+                    <div><dt className="font-semibold">Signer</dt><dd className="text-[var(--muted)]">{pendingConsent?.signedName ?? "Participant"}</dd></div>
+                    <div><dt className="font-semibold">Date</dt><dd className="text-[var(--muted)]">{pendingConsent?.signedOn ?? today}</dd></div>
+                    <div><dt className="font-semibold">Scope</dt><dd className="text-[var(--muted)]">{pendingConsent?.scope === "project" ? "One selected project" : "Eligible approved projects"}</dd></div>
+                  </dl>
+                </div>
+                <p className="mt-5 text-sm leading-6 text-[var(--muted)]">Prototype only: no document or health information is sent to DocuSeal from this app.</p>
+              </div>
+            </section>
+            <section className="flex flex-col rounded-[30px] border border-black bg-[var(--neutral)] p-6">
+              <p className="text-sm font-semibold uppercase tracking-[0.16em]">Signing handoff</p>
+              <div className="mt-5 space-y-3" aria-live="polite">
+                {signingSteps.map((item, index) => {
+                  const done = index < signingStepIndex;
+                  const active = index === signingStepIndex;
+                  return <div key={item.id} className={cn("grid grid-cols-[2rem_1fr] gap-3 rounded-2xl border border-black/15 bg-white p-4", active && "border-black bg-[var(--purple-soft)]")}><span className={cn("grid size-8 place-items-center rounded-full border border-black text-sm font-semibold", done || active ? "bg-black text-white" : "bg-white text-black")}>{done ? <CheckCircle2 className="size-4" aria-hidden="true" /> : index + 1}</span><span><strong>{item.title}</strong><span className="mt-1 block text-sm leading-6 text-[var(--muted)]">{item.text}</span></span></div>;
+                })}
+              </div>
+              <div className="mt-6 rounded-2xl border border-black bg-white p-4 text-sm leading-6 text-[var(--muted)]">This extra layer represents an e-signature provider handoff. In a production integration, DIANA would create a DocuSeal submission, redirect the participant, then validate the returned signing event before recording consent.</div>
+              <div className="mt-auto flex flex-wrap justify-end gap-3 pt-6"><Button variant="outline" onClick={() => setPendingConsent(null)}>Back to edit</Button><a href={docusealUrl} target="_blank" rel="noreferrer" className={buttonVariants({ variant: "outline" })}>DocuSeal <ExternalLink className="size-4" aria-hidden="true" /></a><Button onClick={finishDocusealSigning} disabled={!signingReady}>Return signed consent</Button></div>
+            </section>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={complete} onOpenChange={() => undefined}>
         <DialogContent hideClose>

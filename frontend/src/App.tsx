@@ -13,6 +13,7 @@ import {
 } from "./pages/participant";
 import { LandingPage, NotFoundPage, ProjectDetailPage, ProjectsPage } from "./pages/public";
 import { ScientistDashboardPage, ScientistLoginPage, ScientistTermsPage } from "./pages/scientist";
+import { TreePage } from "./pages/tree";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -60,6 +61,7 @@ function AppRoutes() {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/tree" element={<TreePage />} />
         <Route path="/projects" element={<ProjectsPage />} />
         <Route path="/projects/:projectId" element={<ProjectDetailPage />} />
         <Route path="/participant/login" element={<ParticipantLoginPage />} />

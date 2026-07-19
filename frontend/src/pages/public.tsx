@@ -36,7 +36,10 @@ export function LandingPage() {
             <p className="mx-auto max-w-3xl text-lg leading-8 text-[var(--muted)] sm:text-xl sm:leading-9">
               Our vision is to help women better understand how hormonal changes interact with symptoms, sleep, stress, nutrition, and menstrual-cycle patterns—while making responsibly consented data available for research.
             </p>
-            <Button size="large" className="mt-10" onClick={startGeneralContribution}>Donate data <ArrowRight className="size-5" aria-hidden="true" /></Button>
+            <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <Button variant="purple" size="large" onClick={startGeneralContribution}>Donate data <ArrowRight className="size-5" aria-hidden="true" /></Button>
+              <Link to="/scientist/login" className={buttonVariants({ variant: "green", size: "large" })}>Research Access <ArrowRight className="size-5" aria-hidden="true" /></Link>
+            </div>
             <p className="mt-4 text-xs text-[var(--muted)]">This means contributing selected data, not money.</p>
           </div>
         </section>
@@ -68,13 +71,13 @@ export function LandingPage() {
               <p className="mb-3 text-sm font-semibold uppercase tracking-[0.18em]">How DIANA connects both sides</p>
               <h2 className="text-5xl font-semibold tracking-[-0.06em] sm:text-6xl">Data <span className="serif-accent">flow</span></h2>
             </div>
-            <div className="relative mt-14 grid items-center gap-10 md:grid-cols-2 md:gap-14">
+            <div className="relative mt-14 grid items-center gap-10 md:grid-cols-[0.9fr_1.1fr] md:gap-14">
               <div className="space-y-6 text-lg leading-8 text-[var(--muted)]">
                 <p>Women contribute selected health data and decide how it may be used. DIANA securely structures, de-identifies, and checks the data against each participant’s consent preferences.</p>
                 <p>Approved researchers submit their study requirements, and DIANA identifies matching data that can be shared for that specific project.</p>
               </div>
               <div className="flex justify-center md:justify-end">
-                <Link to="/projects" className="group block w-full max-w-md rounded-[32px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-4" aria-label="View research projects">
+                <Link to="/projects" className="group block w-full max-w-2xl rounded-[32px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-4" aria-label="View research projects">
                   <img src="/assets/diana-data-flow.png" alt="DIANA data flow: female health data in, scientist requests out" className="h-auto w-full transition-transform duration-200 group-hover:-translate-y-1" />
                 </Link>
               </div>
