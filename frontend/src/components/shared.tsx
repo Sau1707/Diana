@@ -100,7 +100,6 @@ export function StandardHeader({ participant = false }: { participant?: boolean 
         <Logo compact />
         <div className="hidden flex-1 justify-center sm:flex"><QuestionBar /></div>
         <nav className="ml-auto flex items-center gap-1 sm:gap-3" aria-label="Primary navigation">
-          <Link to="/tree" className="grid min-h-11 place-items-center rounded-full px-3 text-sm font-semibold hover:bg-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black">Tree</Link>
           <Link to="/projects" className="grid min-h-11 place-items-center rounded-full px-3 text-sm font-semibold hover:bg-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black">Projects</Link>
           {participant && state.participantAuthenticated && (
             <ParticipantUserMenu />
