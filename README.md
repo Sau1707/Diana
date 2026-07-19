@@ -81,7 +81,7 @@ The prototype does not provide diagnoses, treatment, scientific conclusions, rea
 - `frontend/`: React, TypeScript, Vite, Tailwind CSS, shadcn-style Radix components, and Lucide icons.
 - `backend/src/main.py`: FastAPI health endpoint and production SPA host.
 - `frontend/dist/`: generated production bundle served by FastAPI.
-- `Dockerfile`: multi-stage frontend build and single FastAPI production service.
+- `Dockerfile.vercel`: multi-stage frontend build and single FastAPI production service for Vercel Container Images.
 
 All interactive data is synthetic and stored locally in the browser. The frontend and backend remain separate during development, but production runs only one FastAPI service.
 
@@ -133,8 +133,8 @@ Open the Vite URL shown in the terminal. Vite proxies `/api` requests to FastAPI
 Build and run one production service:
 
 ```bash
-docker build -t diana .
-docker run --rm -p 8000:8000 diana
+docker build -f Dockerfile.vercel -t diana .
+docker run --rm -p 8000:80 diana
 ```
 
 The final image contains the compiled frontend and starts only FastAPI.
