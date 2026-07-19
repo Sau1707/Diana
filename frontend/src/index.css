@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+:root {
+  font-family: "Manrope", Inter, system-ui, sans-serif;
+  color: #0a0a0a;
+  background: #fafaf7;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  --black: #0a0a0a;
+  --warm-white: #fafaf7;
+  --surface: #ffffff;
+  --neutral: #f2f2ee;
+  --border: #d9d9d3;
+  --muted: #5f605c;
+  --purple: #d9aef9;
+  --purple-soft: #f4e9fc;
+  --green: #ccfcb4;
+  --green-soft: #efffe8;
+  --deep-green: #315b42;
+  --error: #7f2929;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--warm-white);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+input:not([type="checkbox"]):not([type="radio"]),
+textarea,
+select {
+  width: 100%;
+  border: 1px solid var(--black);
+  border-radius: 18px;
+  background: white;
+  padding: 0.85rem 1rem;
+  outline: none;
+}
+
+input:not([type="checkbox"]):not([type="radio"]):focus,
+textarea:focus,
+select:focus {
+  box-shadow: 0 0 0 3px var(--purple);
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: var(--black);
+}
+
+.serif-accent {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.soft-field {
+  background:
+    radial-gradient(circle at 12% 20%, rgb(217 174 249 / 0.4), transparent 34%),
+    radial-gradient(circle at 88% 72%, rgb(204 252 180 / 0.5), transparent 36%),
+    var(--warm-white);
+}
+
+::selection {
+  background: var(--purple);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

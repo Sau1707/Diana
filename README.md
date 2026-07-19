@@ -1,4 +1,4 @@
-# Diana
+# DIANA
 
 Diana is a Hack-Nation research-infrastructure project for reproducible evaluation in women’s hormonal health. Its core reusable contribution is **Hormonbench**: a governed-data, causal, participant-independent benchmark for next-day forecasting of participant-entered at-home urinary-monitor readings.
 
@@ -69,3 +69,119 @@ The official runner installs nothing, uses explicit private manifests, runs oute
 ## License and scope
 
 Diana’s original code and project documentation are MIT licensed. mcPHASES and third-party data/materials are excluded and retain their own terms. Dataset rows, participant/sample IDs, row predictions, fitted private parameters, and participant-level results are never redistributed.
+
+## Consent-based web prototype
+
+DIANA is a high-fidelity frontend prototype for consent-based women's health-data infrastructure. Participants choose which categories and approved research projects they support, while researchers assess aggregate dataset availability, completeness, follow-up, and governance status without seeing identifiable participant information.
+
+The prototype does not provide diagnoses, treatment, scientific conclusions, real authentication, medical-data integrations, or access to real health records.
+
+## Architecture
+
+- `frontend/`: React, TypeScript, Vite, Tailwind CSS, shadcn-style Radix components, and Lucide icons.
+- `backend/src/main.py`: FastAPI health endpoint and production SPA host.
+- `frontend/dist/`: generated production bundle served by FastAPI.
+- `Dockerfile`: multi-stage frontend build and single FastAPI production service.
+
+All interactive data is synthetic and stored locally in the browser. The frontend and backend remain separate during development, but production runs only one FastAPI service.
+
+## Requirements
+
+- Node.js 22.12 or later
+- npm 10 or later
+- Python 3.11 or later
+- [uv](https://docs.astral.sh/uv/)
+
+## Production-Style Local Run
+
+Install and build the frontend:
+
+```bash
+npm install --prefix frontend
+npm run build --prefix frontend
+```
+
+Install the backend and serve the complete application:
+
+```bash
+uv sync --project backend
+uv run --project backend uvicorn backend.src.main:app --host 0.0.0.0 --port 8000
+```
+
+Open <http://localhost:8000>. FastAPI serves the Vite assets and returns the SPA entry point for routes such as `/projects/mcphases` and `/participant/dashboard`.
+
+The health endpoint is available at <http://localhost:8000/api/health>.
+
+## Development
+
+Start FastAPI with hot reload:
+
+```bash
+make api
+```
+
+Start Vite in a second terminal:
+
+```bash
+make web
+```
+
+Open the Vite URL shown in the terminal. Vite proxies `/api` requests to FastAPI at `127.0.0.1:8000`.
+
+## Docker
+
+Build and run one production service:
+
+```bash
+docker build -t diana .
+docker run --rm -p 8000:8000 diana
+```
+
+The final image contains the compiled frontend and starts only FastAPI.
+
+## Prototype Routes
+
+Public:
+
+- `/`
+- `/projects`
+- `/projects/:projectId`
+
+Participant:
+
+- `/participant/login`
+- `/participant/contribution-choice`
+- `/participant/data-types`
+- `/participant/project/:projectId/contribute`
+- `/participant/consent/:dataType`
+- `/participant/dashboard`
+
+Scientist:
+
+- `/scientist/login`
+- `/scientist/terms`
+- `/scientist/dashboard`
+
+## Quality Checks
+
+```bash
+npm run lint --prefix frontend
+npm run typecheck --prefix frontend
+npm run build --prefix frontend
+uv run --project backend python -m py_compile backend/src/main.py
+```
+
+## Data, Consent, and Scientific Assumptions
+
+- Project names, institutions, counts, coverage percentages, feasibility estimates, and downloads are synthetic demo content.
+- No mcPHASES, NHANES, clinical, wearable, laboratory, or participant-level records are bundled or processed.
+- The approved demo download is an aggregate synthetic availability manifest, not a scientific dataset.
+- Participant contribution changes add one synthetic aggregate match to compatible projects; withdrawal removes that derived match.
+- Optional permissions begin unselected. Contribution state changes only after the consent form is signed.
+- Project-specific permission and broader eligible-project permission are represented separately.
+- Withdrawal stops future simulated access; the interface explains that already-completed research may not be reversible.
+- Scientist views contain aggregate values only and never expose names, signatures, email addresses, or participant rows.
+- Feasibility values are not final sample-size calculations and do not establish scientific suitability.
+- DIANA does not replace ethics approval, governance review, or a data-use agreement.
+
+The application source is reusable under the repository's chosen license. Third-party packages retain their respective licenses.
