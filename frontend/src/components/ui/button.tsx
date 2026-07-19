@@ -6,7 +6,7 @@ import { cn } from "../../lib/utils";
 // The variant function is shared by links that visually match buttons.
 // eslint-disable-next-line react-refresh/only-export-components
 export const buttonVariants = cva(
-  "inline-flex min-h-11 items-center justify-center gap-2 rounded-full border text-sm font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-45",
+  "inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-full border text-sm font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-45",
   {
     variants: {
       variant: {

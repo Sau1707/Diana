@@ -163,7 +163,7 @@ export function ProjectContributionPage() {
                 const category = categoryById(id);
                 if (category === undefined) return null;
                 const completed = alreadyContributed.has(id);
-                return <label key={id} className={cn("flex min-h-16 cursor-pointer items-center gap-4 rounded-2xl border border-black p-4", completed ? "bg-[var(--purple-soft)]" : "bg-white hover:bg-[var(--neutral)]")}><input type="checkbox" checked={completed || selected.includes(id)} disabled={completed} onChange={() => toggle(id)} /><span><strong>{category.shortTitle}</strong><span className="block text-xs text-[var(--muted)]">{completed ? "Project consent active" : category.description}</span></span></label>;
+                return <label key={id} className={cn("flex min-h-16 items-center gap-4 rounded-2xl border border-black p-4", completed ? "cursor-default bg-[var(--purple-soft)]" : "cursor-pointer bg-white hover:bg-[var(--neutral)]")}><input type="checkbox" checked={completed || selected.includes(id)} disabled={completed} onChange={() => toggle(id)} /><span><strong>{category.shortTitle}</strong><span className="block text-xs text-[var(--muted)]">{completed ? "Project consent active" : category.description}</span></span></label>;
               })}
             </div>
           </section>
