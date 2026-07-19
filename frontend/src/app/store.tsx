@@ -13,6 +13,11 @@ import type {
 } from "../lib/types";
 
 const STORAGE_KEY = "diana.prototype.v1";
+const authSessionSchema = z.object({
+  role: z.enum(["participant", "scientist"]),
+  username: z.string(),
+});
+const apiErrorSchema = z.object({ detail: z.string() });
 const categorySchema = z.enum(["cycle", "symptoms", "sleep", "activity", "temperature", "hormones", "medical", "demographics"]);
 const collectionTypeSchema = z.enum(["Retrospective", "Prospective", "Retrospective and prospective"]);
 const availabilitySchema = z.object({
@@ -90,10 +95,13 @@ const initialState: PrototypeState = {
 
 interface StoreValue {
   state: PrototypeState;
+  authReady: boolean;
+  authenticatedUsername: string | null;
   allProjects: Project[];
   publicProjects: Project[];
-  signInParticipant: () => void;
-  signInScientist: () => void;
+  signInParticipant: (username: string, password: string) => Promise<string | null>;
+  signInScientist: (username: string, password: string) => Promise<string | null>;
+  signOut: () => Promise<string | null>;
   acceptScientistTerms: () => void;
   setIntent: (intent: ContributionIntent | null) => void;
   recordConsent: (consent: Omit<ConsentRecord, "id" | "status">) => ConsentRecord;
@@ -121,6 +129,8 @@ function restoreState(): PrototypeState {
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<PrototypeState>(restoreState);
+  const [authReady, setAuthReady] = useState(false);
+  const [authenticatedUsername, setAuthenticatedUsername] = useState<string | null>(null);
 
   useEffect(() => {
     try {
@@ -130,16 +140,110 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     }
   }, [state]);
 
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function restoreAuthentication(): Promise<void> {
+      try {
+        const response = await fetch("/api/auth/session", {
+          credentials: "include",
+          signal: controller.signal,
+        });
+        const payload: unknown = await response.json();
+        const result = authSessionSchema.safeParse(payload);
+        if (!response.ok || !result.success) {
+          setState((current) => ({ ...current, participantAuthenticated: false, scientistAuthenticated: false, scientistTermsAccepted: false }));
+          setAuthenticatedUsername(null);
+          return;
+        }
+
+        setState((current) => ({
+          ...current,
+          participantAuthenticated: result.data.role === "participant",
+          scientistAuthenticated: result.data.role === "scientist",
+        }));
+        setAuthenticatedUsername(result.data.username);
+      } catch (error) {
+        if (!(error instanceof DOMException && error.name === "AbortError")) {
+          setState((current) => ({ ...current, participantAuthenticated: false, scientistAuthenticated: false, scientistTermsAccepted: false }));
+          setAuthenticatedUsername(null);
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setAuthReady(true);
+        }
+      }
+    }
+
+    void restoreAuthentication();
+    window.addEventListener("focus", restoreAuthentication);
+    return () => {
+      controller.abort();
+      window.removeEventListener("focus", restoreAuthentication);
+    };
+  }, []);
+
   const baseProjects = [...projects, ...state.createdProjects];
   const allProjects = baseProjects.map((project) => projectWithContribution(project, state.consents, baseProjects));
   const publicProjects = allProjects.filter((project) => project.isPublic && project.status === "approved");
 
-  function signInParticipant(): void {
-    setState((current) => ({ ...current, participantAuthenticated: true }));
+  async function authenticate(role: "participant" | "scientist", username: string, password: string): Promise<string | null> {
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ role, username, password }),
+      });
+      const payload: unknown = await response.json();
+      if (!response.ok) {
+        const error = apiErrorSchema.safeParse(payload);
+        return error.success ? error.data.detail : "Unable to sign in.";
+      }
+
+      const result = authSessionSchema.safeParse(payload);
+      if (!result.success || result.data.role !== role) {
+        return "The authentication server returned an invalid session.";
+      }
+
+      setState((current) => ({
+        ...current,
+        participantAuthenticated: role === "participant",
+        scientistAuthenticated: role === "scientist",
+      }));
+      setAuthenticatedUsername(result.data.username);
+      return null;
+    } catch {
+      return "The authentication service is unavailable. Please try again.";
+    }
   }
 
-  function signInScientist(): void {
-    setState((current) => ({ ...current, scientistAuthenticated: true }));
+  async function signInParticipant(username: string, password: string): Promise<string | null> {
+    return authenticate("participant", username, password);
+  }
+
+  async function signInScientist(username: string, password: string): Promise<string | null> {
+    return authenticate("scientist", username, password);
+  }
+
+  async function signOut(): Promise<string | null> {
+    try {
+      const response = await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
+      if (!response.ok) {
+        return "Unable to end the server session. Please try again.";
+      }
+    } catch {
+      return "The authentication service is unavailable. Please try again.";
+    }
+
+    setState((current) => ({
+      ...current,
+      participantAuthenticated: false,
+      scientistAuthenticated: false,
+      scientistTermsAccepted: false,
+    }));
+    setAuthenticatedUsername(null);
+    return null;
   }
 
   function acceptScientistTerms(): void {
@@ -258,10 +362,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     <StoreContext.Provider
       value={{
         state,
+        authReady,
+        authenticatedUsername,
         allProjects,
         publicProjects,
         signInParticipant,
         signInScientist,
+        signOut,
         acceptScientistTerms,
         setIntent,
         recordConsent,

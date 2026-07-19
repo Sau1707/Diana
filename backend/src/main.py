@@ -2,8 +2,10 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+from starlette.middleware.sessions import SessionMiddleware
 
 from backend.src.envs import env
+from backend.src.routes import auth
 
 
 class HealthResponse(BaseModel):
@@ -19,6 +21,15 @@ app = FastAPI(
     description="Backend and production frontend host for the DIANA prototype.",
     version="0.1.0",
 )
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=env.session_secret.get_secret_value(),
+    session_cookie="diana_session",
+    max_age=env.session_max_age,
+    same_site="lax",
+    https_only=env.secure_cookies or env.deployment in {"preview", "production"},
+)
+app.include_router(auth.router)
 
 
 @app.get("/api/health", response_model=HealthResponse)

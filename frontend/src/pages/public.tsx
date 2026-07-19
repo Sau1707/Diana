@@ -18,12 +18,12 @@ const purposeCopy = [
 
 export function LandingPage() {
   const navigate = useNavigate();
-  const { setIntent } = useStore();
+  const { state, setIntent } = useStore();
   const [highlightedPath, setHighlightedPath] = useState(false);
 
   function startGeneralContribution(): void {
     setIntent({ kind: "general" });
-    navigate("/participant/login");
+    navigate(state.participantAuthenticated ? "/participant/contribution-choice" : "/participant/login");
   }
 
   return (

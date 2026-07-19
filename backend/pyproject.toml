@@ -5,6 +5,7 @@ description = "FastAPI production host for the DIANA consent-based health-data p
 requires-python = ">=3.11"
 dependencies = [
     "fastapi==0.116.1",
+    "itsdangerous==2.2.0",
     "pydantic-settings==2.10.1",
     "uvicorn[standard]==0.35.0",
 ]

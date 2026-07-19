@@ -1,5 +1,5 @@
 import { ArrowRight, CircleUserRound, Download, FileCheck2, FlaskConical, Menu, Plus, ShieldAlert, XCircle } from "lucide-react";
-import { useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { useStore } from "../app/store";
@@ -12,24 +12,45 @@ import { cn, formatNumber } from "../lib/utils";
 
 export function ScientistLoginPage() {
   const navigate = useNavigate();
-  const { signInScientist } = useStore();
+  const { state, authReady, signInScientist } = useStore();
   const [requestSent, setRequestSent] = useState(false);
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-  function submit(event: FormEvent<HTMLFormElement>): void {
+  useEffect(() => {
+    if (authReady && state.scientistAuthenticated && !submitting) {
+      navigate(state.scientistTermsAccepted ? "/scientist/dashboard" : "/scientist/terms", { replace: true });
+    }
+  }, [authReady, navigate, state.scientistAuthenticated, state.scientistTermsAccepted, submitting]);
+
+  async function submit(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
-    signInScientist();
+    const form = new FormData(event.currentTarget);
+    const username = String(form.get("username") ?? "").trim();
+    const password = String(form.get("password") ?? "");
+    setSubmitting(true);
+    const authError = await signInScientist(username, password);
+    if (authError !== null) {
+      setSubmitting(false);
+      setError(authError);
+      return;
+    }
+
+    setError("");
     navigate("/scientist/terms");
   }
 
   return (
     <AuthShell title="LOG IN" step={1}>
       <form onSubmit={submit} className="mx-auto grid w-full max-w-2xl gap-5">
-        <div><label className="mb-2 block font-semibold" htmlFor="scientist-email">Institutional email</label><input id="scientist-email" type="email" required autoComplete="email" placeholder="researcher@institution.example" /></div>
-        <div><label className="mb-2 block font-semibold" htmlFor="scientist-password">Password</label><input id="scientist-password" type="password" required minLength={6} autoComplete="current-password" placeholder="At least 6 characters" /></div>
+        <div><label className="mb-2 block font-semibold" htmlFor="scientist-username">Username</label><input id="scientist-username" name="username" required autoComplete="username" placeholder="scientist" /></div>
+        <div><label className="mb-2 block font-semibold" htmlFor="scientist-password">Password</label><input id="scientist-password" name="password" type="password" required minLength={1} autoComplete="current-password" /></div>
         <div><label className="mb-2 block font-semibold" htmlFor="scientist-institution">Institution</label><input id="scientist-institution" required placeholder="Demo research institution" /></div>
         <p className="text-sm leading-6 text-[var(--muted)]">Researcher access is subject to institutional verification and governance review.</p>
+        {import.meta.env.DEV && <div className="rounded-2xl bg-[var(--green-soft)] p-4 text-sm"><strong>Local demo account</strong><p className="mt-1 text-[var(--muted)]">Username: scientist · Password: diana-scientist</p></div>}
         {requestSent && <p className="rounded-2xl bg-[var(--green-soft)] p-4 text-sm" role="status">Demo access request recorded. No message was sent outside this prototype.</p>}
-        <div className="flex flex-wrap items-center justify-between gap-4"><button type="button" onClick={() => setRequestSent(true)} className="min-h-11 rounded-full px-2 text-sm font-semibold underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black">Request researcher access</button><Button type="submit" size="large">Continue <ArrowRight className="size-6" aria-hidden="true" /></Button></div>
+        {error !== "" && <p className="rounded-2xl bg-red-50 p-4 text-sm font-semibold text-[var(--error)]" role="alert">{error}</p>}
+        <div className="flex flex-wrap items-center justify-between gap-4"><button type="button" onClick={() => setRequestSent(true)} className="min-h-11 rounded-full px-2 text-sm font-semibold underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black">Request researcher access</button><Button type="submit" size="large" disabled={submitting}>{submitting ? "Signing in…" : "Continue"} <ArrowRight className="size-6" aria-hidden="true" /></Button></div>
       </form>
     </AuthShell>
   );
@@ -61,12 +82,14 @@ function TermsCheckbox({ name, label }: { name: string; label: string }) {
 }
 
 export function ScientistDashboardPage() {
-  const { state, allProjects, selectScientistProject, createProject } = useStore();
+  const navigate = useNavigate();
+  const { state, authenticatedUsername, allProjects, selectScientistProject, createProject, signOut } = useStore();
   const selected = allProjects.find((project) => project.id === state.selectedScientistProjectId) ?? allProjects[0];
   const [projectModal, setProjectModal] = useState(false);
   const [mobileProjects, setMobileProjects] = useState(false);
   const [downloadInfo, setDownloadInfo] = useState(false);
   const [profileInfo, setProfileInfo] = useState(false);
+  const [profileError, setProfileError] = useState("");
 
   if (selected === undefined) {
     return <main className="grid min-h-dvh place-items-center">No demo projects are available.</main>;
@@ -86,6 +109,16 @@ export function ScientistDashboardPage() {
     anchor.download = `${selected.id}-synthetic-availability.csv`;
     anchor.click();
     URL.revokeObjectURL(url);
+  }
+
+  async function logout(): Promise<void> {
+    const authError = await signOut();
+    if (authError !== null) {
+      setProfileError(authError);
+      return;
+    }
+    setProfileError("");
+    navigate("/scientist/login", { replace: true });
   }
 
   return (
@@ -108,7 +141,7 @@ export function ScientistDashboardPage() {
       <Dialog open={mobileProjects} onOpenChange={setMobileProjects}><DialogContent className="max-w-md"><DialogHeader><DialogTitle>Current projects</DialogTitle><DialogDescription>Select a project or create a new feasibility request.</DialogDescription></DialogHeader><ScientistSidebar projects={allProjects} selectedId={selected.id} onSelect={selectProject} onNew={() => { setMobileProjects(false); setProjectModal(true); }} hideLogo /></DialogContent></Dialog>
       <NewProjectDialog open={projectModal} onOpenChange={setProjectModal} onCreate={createProject} />
       <Dialog open={downloadInfo} onOpenChange={setDownloadInfo}><DialogContent><DialogHeader><DialogTitle>Dataset access is not available</DialogTitle><DialogDescription>Download is enabled only after all approval and participant-permission checks are complete.</DialogDescription></DialogHeader><div className="rounded-3xl bg-[var(--green-soft)] p-6"><h3 className="font-semibold">Current status</h3><p className="mt-2 text-[var(--muted)]">{selected.governanceStatus}</p><p className="mt-4 text-sm leading-6 text-[var(--muted)]">This prototype distinguishes preliminary availability from actual approved dataset access. It never exposes identifiable participant records.</p></div></DialogContent></Dialog>
-      <Dialog open={profileInfo} onOpenChange={setProfileInfo}><DialogContent><DialogHeader><DialogTitle>Researcher profile</DialogTitle><DialogDescription>Synthetic profile used only in this local prototype.</DialogDescription></DialogHeader><div className="rounded-3xl bg-[var(--neutral)] p-6"><p className="font-semibold">Demo researcher</p><p className="mt-1 text-sm text-[var(--muted)]">Your demo institution · Verification simulated</p></div><div className="mt-6"><Link to="/" className="font-semibold underline underline-offset-4">Return to public site</Link></div></DialogContent></Dialog>
+      <Dialog open={profileInfo} onOpenChange={setProfileInfo}><DialogContent><DialogHeader><DialogTitle>Researcher profile</DialogTitle><DialogDescription>Authenticated prototype researcher account.</DialogDescription></DialogHeader><div className="rounded-3xl bg-[var(--neutral)] p-6"><p className="font-semibold">{authenticatedUsername ?? "Researcher"}</p><p className="mt-1 text-sm text-[var(--muted)]">Your demo institution · Researcher session active</p></div>{profileError !== "" && <p className="mt-4 rounded-2xl bg-red-50 p-4 text-sm font-semibold text-[var(--error)]" role="alert">{profileError}</p>}<div className="mt-6 flex flex-wrap items-center justify-between gap-4"><Link to="/" className="font-semibold underline underline-offset-4">Return to public site</Link><Button variant="outline" onClick={() => void logout()}>Sign out</Button></div></DialogContent></Dialog>
     </div>
   );
 }

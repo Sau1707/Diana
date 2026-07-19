@@ -1,5 +1,5 @@
 import { ArrowRight, FileText, ShieldCheck } from "lucide-react";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 
 import { useStore } from "../app/store";
@@ -19,12 +19,31 @@ function isCategoryId(value: string): value is DataCategoryId {
 export function ParticipantLoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { state, signInParticipant } = useStore();
-  const [createAccount, setCreateAccount] = useState(false);
+  const { state, authReady, signInParticipant } = useStore();
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-  function submit(event: FormEvent<HTMLFormElement>): void {
+  useEffect(() => {
+    if (authReady && state.participantAuthenticated && !submitting) {
+      const projectId = state.intent?.kind === "project" ? state.intent.projectId : undefined;
+      navigate(projectId === undefined ? "/participant/contribution-choice" : `/participant/project/${projectId}/contribute`, { replace: true });
+    }
+  }, [authReady, navigate, state.intent, state.participantAuthenticated, submitting]);
+
+  async function submit(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
-    signInParticipant();
+    const form = new FormData(event.currentTarget);
+    const username = String(form.get("username") ?? "").trim();
+    const password = String(form.get("password") ?? "");
+    setSubmitting(true);
+    const authError = await signInParticipant(username, password);
+    if (authError !== null) {
+      setSubmitting(false);
+      setError(authError);
+      return;
+    }
+
+    setError("");
     const navigationState: unknown = location.state;
     const returnTo = typeof navigationState === "object"
       && navigationState !== null
@@ -38,15 +57,13 @@ export function ParticipantLoginPage() {
   }
 
   return (
-    <AuthShell title={createAccount ? "CREATE ACCOUNT" : "LOG IN"} step={1}>
+    <AuthShell title="LOG IN" step={1}>
       <form onSubmit={submit} className="mx-auto grid w-full max-w-2xl gap-5">
-        <div><label className="mb-2 block font-semibold" htmlFor="participant-email">Email</label><input id="participant-email" name="email" type="email" autoComplete="email" required placeholder="participant@example.test" /></div>
-        <div><label className="mb-2 block font-semibold" htmlFor="participant-password">Password</label><input id="participant-password" name="password" type="password" minLength={6} autoComplete={createAccount ? "new-password" : "current-password"} required placeholder="At least 6 characters" /></div>
-        {createAccount && <div><label className="mb-2 block font-semibold" htmlFor="access-code">Optional access code</label><input id="access-code" name="accessCode" placeholder="Leave blank for this prototype" /></div>}
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-4">
-          <button type="button" className="min-h-11 rounded-full px-2 text-sm font-semibold underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black" onClick={() => setCreateAccount((current) => !current)}>{createAccount ? "Already have an account?" : "Create an account"}</button>
-          <Button type="submit" size="large" aria-label={createAccount ? "Create account and continue" : "Sign in and continue"}>{createAccount ? "Create and continue" : "Sign in"}<ArrowRight className="size-6" aria-hidden="true" /></Button>
-        </div>
+        <div><label className="mb-2 block font-semibold" htmlFor="participant-username">Username</label><input id="participant-username" name="username" autoComplete="username" required placeholder="participant" /></div>
+        <div><label className="mb-2 block font-semibold" htmlFor="participant-password">Password</label><input id="participant-password" name="password" type="password" minLength={1} autoComplete="current-password" required /></div>
+        {import.meta.env.DEV && <div className="rounded-2xl bg-[var(--purple-soft)] p-4 text-sm"><strong>Local demo account</strong><p className="mt-1 text-[var(--muted)]">Username: participant · Password: diana-participant</p></div>}
+        {error !== "" && <p className="rounded-2xl bg-red-50 p-4 text-sm font-semibold text-[var(--error)]" role="alert">{error}</p>}
+        <div className="mt-3 flex justify-end"><Button type="submit" size="large" disabled={submitting}>{submitting ? "Signing in…" : "Sign in"}<ArrowRight className="size-6" aria-hidden="true" /></Button></div>
         <PrivacyNote />
       </form>
     </AuthShell>
@@ -270,10 +287,12 @@ function ConsentCheckbox({ name, label, required = false }: { name: string; labe
 }
 
 export function ParticipantDashboardPage() {
-  const { state, allProjects, updateConsent, withdrawConsent } = useStore();
+  const navigate = useNavigate();
+  const { state, authenticatedUsername, allProjects, updateConsent, withdrawConsent, signOut } = useStore();
   const [selectedConsent, setSelectedConsent] = useState<ConsentRecord | null>(null);
   const [mode, setMode] = useState<"review" | "modify" | "withdraw" | null>(null);
   const [manageError, setManageError] = useState("");
+  const [logoutError, setLogoutError] = useState("");
   const activeConsents = state.consents.filter((consent) => consent.status === "active");
   const supportedProjects = allProjects.map((project) => ({ project, matches: matchingCategories(project, state.consents, allProjects) })).filter((item) => item.matches.length > 0);
 
@@ -314,11 +333,22 @@ export function ParticipantDashboardPage() {
     setMode(null);
   }
 
+  async function logout(): Promise<void> {
+    const authError = await signOut();
+    if (authError !== null) {
+      setLogoutError(authError);
+      return;
+    }
+    setLogoutError("");
+    navigate("/participant/login", { replace: true });
+  }
+
   return (
     <div>
       <StandardHeader participant />
       <main className="mx-auto max-w-7xl px-5 py-12 sm:px-10 sm:py-16">
-        <PageTitle>Your contribution to research</PageTitle>
+        <div className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-center"><PageTitle>Your contribution to research</PageTitle><div className="flex items-center justify-between gap-4 rounded-full border border-black bg-white px-5 py-3 sm:justify-start"><span className="text-sm font-semibold">{authenticatedUsername ?? "Participant"}</span><Button variant="ghost" size="small" onClick={() => void logout()}>Sign out</Button></div></div>
+        {logoutError !== "" && <p className="mt-4 rounded-2xl bg-red-50 p-4 text-sm font-semibold text-[var(--error)]" role="alert">{logoutError}</p>}
         <div className="mt-8 grid gap-4 sm:grid-cols-3"><Summary value={state.contributedCategoryIds.length} label="Data categories contributed" tone="purple" /><Summary value={activeConsents.length} label="Active permissions" tone="neutral" /><Summary value={supportedProjects.length} label="Projects your data may support" tone="green" /></div>
 
         <section className="mt-16"><h2 className="text-3xl font-semibold tracking-[-0.04em]">Projects your data may support</h2><div className="mt-6 grid gap-5 lg:grid-cols-2">{supportedProjects.map(({ project, matches }) => <article key={project.id} className="rounded-[28px] border border-black bg-white p-6"><p className="text-sm text-[var(--muted)]">{project.institution}</p><h3 className="mt-2 text-xl font-semibold">{project.title}</h3><p className="mt-3 text-sm text-[var(--muted)]">Your contribution matches {matches.length} requested data type{matches.length === 1 ? "" : "s"} for this project.</p><div className="mt-4 flex flex-wrap gap-2">{matches.map((id) => <StatusPill key={id} tone="purple">{categoryById(id)?.shortTitle}</StatusPill>)}</div><div className="mt-6 flex items-center justify-between gap-4"><StatusPill tone="green">Permission active</StatusPill><Link to={`/projects/${project.id}`} className="font-semibold underline underline-offset-4">View project</Link></div></article>)}{supportedProjects.length === 0 && <div className="rounded-[28px] border border-dashed border-black p-8 text-[var(--muted)]">No active contribution currently matches a project.</div>}</div></section>

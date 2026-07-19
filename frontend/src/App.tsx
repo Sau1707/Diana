@@ -25,15 +25,21 @@ function ScrollToTop() {
 }
 
 function RequireParticipant({ children }: { children: ReactNode }) {
-  const { state } = useStore();
+  const { state, authReady } = useStore();
   const location = useLocation();
+  if (!authReady) {
+    return <AuthLoading />;
+  }
   return state.participantAuthenticated
     ? children
     : <Navigate to="/participant/login" replace state={{ returnTo: `${location.pathname}${location.search}` }} />;
 }
 
 function RequireScientist({ terms = false, children }: { terms?: boolean; children: ReactNode }) {
-  const { state } = useStore();
+  const { state, authReady } = useStore();
+  if (!authReady) {
+    return <AuthLoading />;
+  }
   if (!state.scientistAuthenticated) {
     return <Navigate to="/scientist/login" replace />;
   }
@@ -41,6 +47,10 @@ function RequireScientist({ terms = false, children }: { terms?: boolean; childr
     return <Navigate to="/scientist/terms" replace />;
   }
   return children;
+}
+
+function AuthLoading() {
+  return <main className="grid min-h-[calc(100dvh-33px)] place-items-center bg-[var(--warm-white)]"><p className="text-sm font-semibold">Checking your session…</p></main>;
 }
 
 function AppRoutes() {
