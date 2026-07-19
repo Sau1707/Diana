@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowRight, Check, Database, Network, Shield, UploadCloud } from "lucide-react";
+import { ArrowRight, Check, Database, Shield, UploadCloud } from "lucide-react";
 import { useDeferredValue, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
@@ -19,7 +19,6 @@ const purposeCopy = [
 export function LandingPage() {
   const navigate = useNavigate();
   const { state, setIntent } = useStore();
-  const [highlightedPath, setHighlightedPath] = useState(false);
 
   function startGeneralContribution(): void {
     setIntent({ kind: "general" });
@@ -65,32 +64,20 @@ export function LandingPage() {
 
         <section className="overflow-hidden border-b border-black px-5 py-24 sm:px-10">
           <div className="mx-auto max-w-6xl">
-            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.18em]">How DIANA connects both sides</p>
-            <h2 className="text-5xl font-semibold tracking-[-0.06em] sm:text-6xl">Data <span className="serif-accent">flow</span></h2>
-            <div className="relative mt-14 grid gap-5 lg:grid-cols-[1fr_130px_1.15fr_130px_1fr] lg:items-center">
-              <div className="rounded-[32px] border border-black bg-[var(--purple-soft)] p-7 lg:-translate-y-8">
-                <UploadCloud className="mb-12 size-8 stroke-[1.3]" aria-hidden="true" />
-                <h3 className="text-xl font-semibold">Participant contribution</h3>
-                <p className="mt-2 leading-7 text-[var(--muted)]">Women contribute selected longitudinal data with consent.</p>
+            <div className="mx-auto max-w-2xl text-center">
+              <p className="mb-3 text-sm font-semibold uppercase tracking-[0.18em]">How DIANA connects both sides</p>
+              <h2 className="text-5xl font-semibold tracking-[-0.06em] sm:text-6xl">Data <span className="serif-accent">flow</span></h2>
+            </div>
+            <div className="relative mt-14 grid items-center gap-10 md:grid-cols-2 md:gap-14">
+              <div className="space-y-6 text-lg leading-8 text-[var(--muted)]">
+                <p>Women contribute selected health data and decide how it may be used. DIANA securely structures, de-identifies, and checks the data against each participant’s consent preferences.</p>
+                <p>Approved researchers submit their study requirements, and DIANA identifies matching data that can be shared for that specific project.</p>
               </div>
-              <button onClick={() => setHighlightedPath((current) => !current)} className={cn("group flex min-h-14 items-center justify-center gap-2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black lg:flex-col", highlightedPath && "text-[var(--deep-green)]")} aria-pressed={highlightedPath} aria-label="Highlight contribution to infrastructure path">
-                <span className={cn("h-px flex-1 bg-black transition-[height] lg:w-full", highlightedPath && "h-1 bg-[var(--purple)]")} />
-                <ArrowRight className="hidden size-5 lg:block" aria-hidden="true" /><ArrowDown className="size-5 lg:hidden" aria-hidden="true" />
-              </button>
-              <div className="rounded-[32px] border border-black bg-gradient-to-br from-[var(--purple-soft)] to-[var(--green-soft)] p-7">
-                <Network className="mb-12 size-8 stroke-[1.3]" aria-hidden="true" />
-                <h3 className="text-xl font-semibold">DIANA data infrastructure</h3>
-                <p className="mt-2 leading-7 text-[var(--muted)]">DIANA structures, de-identifies, and checks the permitted use of the data.</p>
+              <div className="flex justify-center md:justify-end">
+                <Link to="/projects" className="group block w-full max-w-md rounded-[32px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-4" aria-label="View research projects">
+                  <img src="/assets/diana-data-flow.png" alt="DIANA data flow: female health data in, scientist requests out" className="h-auto w-full transition-transform duration-200 group-hover:-translate-y-1" />
+                </Link>
               </div>
-              <button onClick={() => setHighlightedPath((current) => !current)} className={cn("group flex min-h-14 items-center justify-center gap-2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black lg:flex-col", highlightedPath && "text-[var(--deep-green)]")} aria-pressed={highlightedPath} aria-label="Highlight infrastructure to research path">
-                <span className={cn("h-px flex-1 bg-black transition-[height] lg:w-full", highlightedPath && "h-1 bg-[var(--green)]")} />
-                <ArrowRight className="hidden size-5 lg:block" aria-hidden="true" /><ArrowDown className="size-5 lg:hidden" aria-hidden="true" />
-              </button>
-              <Link to="/projects" className="group rounded-[32px] border border-black bg-[var(--green-soft)] p-7 transition-transform hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black lg:translate-y-8">
-                <Database className="mb-12 size-8 stroke-[1.3]" aria-hidden="true" />
-                <h3 className="flex items-center justify-between gap-4 text-xl font-semibold">Research projects <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" aria-hidden="true" /></h3>
-                <p className="mt-2 leading-7 text-[var(--muted)]">Approved projects request data that matches their defined study requirements.</p>
-              </Link>
             </div>
           </div>
         </section>

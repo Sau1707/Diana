@@ -55,7 +55,8 @@ export function QuestionBar() {
         id={searchId}
         value={query}
         onChange={(event) => setQuery(event.target.value)}
-        className="h-12 w-full rounded-full border border-black bg-white px-12 text-sm outline-none transition-shadow placeholder:text-neutral-500 focus:ring-2 focus:ring-[var(--purple)]"
+        className="h-12 w-full rounded-full border border-black bg-white text-sm outline-none transition-shadow placeholder:text-neutral-500 focus:ring-2 focus:ring-[var(--purple)]"
+        style={{ paddingLeft: "3rem", paddingRight: "1.25rem" }}
         placeholder="Ask questions about female health…"
       />
       {focused && deferredQuery.length > 1 && (
